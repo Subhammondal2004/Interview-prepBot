@@ -1,0 +1,572 @@
+[
+    {
+        "domain": "Data Structures",
+        "difficulty": "Easy",
+        "questionText": "What is an array?",
+        "answerKey": "An array is a collection of elements stored at contiguous memory locations, accessible by index.",
+        "tags": [
+            "array",
+            "basics"
+        ]
+    },
+    {
+        "domain": "Data Structures",
+        "difficulty": "Easy",
+        "questionText": "What is a stack and how does it work?",
+        "answerKey": "A stack is a LIFO (Last In First Out) data structure. Elements are added and removed from the top.",
+        "tags": [
+            "stack",
+            "lifo"
+        ]
+    },
+    {
+        "domain": "Data Structures",
+        "difficulty": "Medium",
+        "questionText": "How does a queue differ from a stack?",
+        "answerKey": "A queue follows FIFO (First In First Out), while a stack follows LIFO (Last In First Out).",
+        "tags": [
+            "queue",
+            "stack",
+            "comparison"
+        ]
+    },
+    {
+        "domain": "Data Structures",
+        "difficulty": "Medium",
+        "questionText": "Explain the concept of a linked list.",
+        "answerKey": "A linked list is a linear data structure where elements (nodes) point to the next node, allowing dynamic memory usage.",
+        "tags": [
+            "linked list",
+            "nodes"
+        ]
+    },
+    {
+        "domain": "Data Structures",
+        "difficulty": "Medium",
+        "questionText": "What is a binary search and how does it work?",
+        "answerKey": "Binary search repeatedly divides a sorted array into halves to locate a target element efficiently.",
+        "tags": [
+            "binary search",
+            "algorithm"
+        ]
+    },
+    {
+        "domain": "Data Structures",
+        "difficulty": "Medium",
+        "questionText": "What is a hash table and when would you use it?",
+        "answerKey": "A hash table stores key-value pairs using a hash function for fast access. It is used for quick lookup.",
+        "tags": [
+            "hash table",
+            "hashing"
+        ]
+    },
+    {
+        "domain": "Data Structures",
+        "difficulty": "Hard",
+        "questionText": "Explain how a trie works and give a use-case.",
+        "answerKey": "A trie is a tree-based data structure used to store strings. It's efficient for prefix-based searches like autocomplete.",
+        "tags": [
+            "trie",
+            "prefix tree"
+        ]
+    },
+    {
+        "domain": "Data Structures",
+        "difficulty": "Hard",
+        "questionText": "What are AVL trees and how do they maintain balance?",
+        "answerKey": "AVL trees are self-balancing binary search trees. They maintain balance using rotations after insertions/deletions.",
+        "tags": [
+            "avl tree",
+            "balanced tree"
+        ]
+    },
+    {
+        "domain": "Data Structures",
+        "difficulty": "Hard",
+        "questionText": "How would you design a data structure that supports insert, delete, and getRandom in O(1) time?",
+        "answerKey": "Use a combination of a hash map for fast lookup and a dynamic array for random access. Swap and remove elements efficiently.",
+        "tags": [
+            "design",
+            "hash map",
+            "random"
+        ]
+    },
+    {
+        "domain": "Data Structures",
+        "difficulty": "Hard",
+        "questionText": "What is a graph and what are the different types of graphs?",
+        "answerKey": "A graph is a set of nodes connected by edges. It can be directed or undirected, weighted or unweighted.",
+        "tags": [
+            "graph",
+            "nodes",
+            "edges"
+        ]
+    },
+    {
+        "domain": "Data Structures",
+        "difficulty": "Hard",
+        "questionText": "Explain Dijkstra's algorithm and its use-case.",
+        "answerKey": "Dijkstra's algorithm finds the shortest path in a weighted graph. It's used in routing and navigation systems.",
+        "tags": [
+            "dijkstra",
+            "shortest path",
+            "algorithm"
+        ]
+    },
+    {
+        "domain": "HR",
+        "difficulty": "Easy",
+        "questionText": "Tell me about yourself.",
+        "answerKey": "Provide a brief summary of your education, achievements, technical skills, and career goals.",
+        "tags": [
+            "self-introduction",
+            "personal"
+        ]
+    },
+    {
+        "domain": "HR",
+        "difficulty": "Easy",
+        "questionText": "Why do you want to work at our company?",
+        "answerKey": "Show that you've researched the company and align its values, culture, or work with your goals.",
+        "tags": [
+            "company",
+            "motivation"
+        ]
+    },
+    {
+        "domain": "HR",
+        "difficulty": "Easy",
+        "questionText": "What are your strengths?",
+        "answerKey": "Mention qualities like leadership, communication, problem-solving, backed with examples.",
+        "tags": [
+            "strengths",
+            "behavioral"
+        ]
+    },
+    {
+        "domain": "HR",
+        "difficulty": "Medium",
+        "questionText": "What are your weaknesses and how are you improving them?",
+        "answerKey": "Be honest, mention a genuine but non-critical weakness, and how you’re actively working to improve it.",
+        "tags": [
+            "weaknesses",
+            "self-awareness"
+        ]
+    },
+    {
+        "domain": "HR",
+        "difficulty": "Medium",
+        "questionText": "How do you handle feedback or criticism?",
+        "answerKey": "Show openness, learning attitude, and willingness to apply constructive feedback to improve.",
+        "tags": [
+            "feedback",
+            "growth mindset"
+        ]
+    },
+    {
+        "domain": "HR",
+        "difficulty": "Medium",
+        "questionText": "Describe a time you worked in a team and faced conflict.",
+        "answerKey": "Use the STAR method to show your communication, empathy, and conflict resolution skills.",
+        "tags": [
+            "conflict",
+            "teamwork",
+            "star"
+        ]
+    },
+    {
+        "domain": "HR",
+        "difficulty": "Medium",
+        "questionText": "How do you manage stress during tight deadlines?",
+        "answerKey": "Mention techniques like time management, prioritizing tasks, staying calm, and asking for help when needed.",
+        "tags": [
+            "stress",
+            "deadline"
+        ]
+    },
+    {
+        "domain": "HR",
+        "difficulty": "Hard",
+        "questionText": "Describe a time when you failed at something. How did you handle it?",
+        "answerKey": "Explain the situation, your mistake, what you learned, and how you improved afterward.",
+        "tags": [
+            "failure",
+            "reflection"
+        ]
+    },
+    {
+        "domain": "HR",
+        "difficulty": "Hard",
+        "questionText": "Tell me about a time you had to take a leadership role unexpectedly.",
+        "answerKey": "Demonstrate initiative, team coordination, and decision-making skills using STAR format.",
+        "tags": [
+            "leadership",
+            "initiative"
+        ]
+    },
+    {
+        "domain": "HR",
+        "difficulty": "Hard",
+        "questionText": "Have you ever disagreed with your manager? How did you handle it?",
+        "answerKey": "Explain how you respectfully communicated your point, listened actively, and worked toward a mutual resolution.",
+        "tags": [
+            "disagreement",
+            "manager",
+            "professionalism"
+        ]
+    },
+    {
+        "domain": "HR",
+        "difficulty": "Hard",
+        "questionText": "What are your long-term career goals?",
+        "answerKey": "Discuss your aspirations, how they align with the company’s direction, and your commitment to growth.",
+        "tags": [
+            "career goals",
+            "future"
+        ]
+    },
+    {
+        "domain": "Database",
+        "difficulty": "Easy",
+        "questionText": "What is a primary key?",
+        "answerKey": "A primary key uniquely identifies each record in a table and cannot contain null or duplicate values.",
+        "tags": [
+            "primary key",
+            "sql"
+        ]
+    },
+    {
+        "domain": "Database",
+        "difficulty": "Easy",
+        "questionText": "What is the difference between SQL and NoSQL databases?",
+        "answerKey": "SQL databases are relational and structured, while NoSQL databases are non-relational and schema-less or flexible.",
+        "tags": [
+            "sql",
+            "nosql"
+        ]
+    },
+    {
+        "domain": "Database",
+        "difficulty": "Easy",
+        "questionText": "What is a foreign key?",
+        "answerKey": "A foreign key is a column that creates a relationship between two tables by referencing the primary key in another table.",
+        "tags": [
+            "foreign key",
+            "relationships"
+        ]
+    },
+    {
+        "domain": "Database",
+        "difficulty": "Medium",
+        "questionText": "What is normalization? Why is it important?",
+        "answerKey": "Normalization is the process of organizing data to reduce redundancy and improve integrity. It ensures efficient data storage.",
+        "tags": [
+            "normalization",
+            "design"
+        ]
+    },
+    {
+        "domain": "Database",
+        "difficulty": "Medium",
+        "questionText": "Explain the differences between INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL JOIN.",
+        "answerKey": "INNER returns matched rows; LEFT includes all from the left table, RIGHT from the right, and FULL includes all with NULLs for missing matches.",
+        "tags": [
+            "joins",
+            "sql"
+        ]
+    },
+    {
+        "domain": "Database",
+        "difficulty": "Medium",
+        "questionText": "What is an index and how does it improve performance?",
+        "answerKey": "An index allows faster retrieval of records from a table. It works like a table of contents using pointers to data.",
+        "tags": [
+            "index",
+            "performance"
+        ]
+    },
+    {
+        "domain": "Database",
+        "difficulty": "Hard",
+        "questionText": "Explain ACID properties in databases.",
+        "answerKey": "ACID stands for Atomicity, Consistency, Isolation, and Durability — essential properties that ensure reliable transactions.",
+        "tags": [
+            "acid",
+            "transactions"
+        ]
+    },
+    {
+        "domain": "Database",
+        "difficulty": "Hard",
+        "questionText": "What is a deadlock in a database and how can it be avoided?",
+        "answerKey": "A deadlock occurs when two or more transactions are waiting for each other to release locks. It can be avoided by lock ordering, timeouts, or deadlock detection.",
+        "tags": [
+            "deadlock",
+            "concurrency"
+        ]
+    },
+    {
+        "domain": "Database",
+        "difficulty": "Hard",
+        "questionText": "How does MongoDB store data and how is it different from traditional SQL databases?",
+        "answerKey": "MongoDB stores data in flexible, JSON-like BSON documents, unlike SQL tables. It allows nested fields and does not require a strict schema.",
+        "tags": [
+            "mongodb",
+            "bson",
+            "nosql"
+        ]
+    },
+    {
+        "domain": "Database",
+        "difficulty": "Medium",
+        "questionText": "What is denormalization and when is it useful?",
+        "answerKey": "Denormalization is the process of adding redundancy to improve read performance, often used in OLAP or analytics workloads.",
+        "tags": [
+            "denormalization",
+            "performance"
+        ]
+    },
+    {
+        "domain": "Database",
+        "difficulty": "Hard",
+        "questionText": "How would you design a database schema for an e-commerce application?",
+        "answerKey": "Design tables for users, products, orders, and order items with appropriate relationships. Consider normalization and indexing for performance.",
+        "tags": [
+            "database design",
+            "e-commerce"
+        ]
+    },
+    {
+        "domain": "Operating Systems",
+        "difficulty": "Easy",
+        "questionText": "What is a process?",
+        "answerKey": "A process is an instance of a program in execution. It has its own memory, code, data, and system resources.",
+        "tags": [
+            "process",
+            "basics"
+        ]
+    },
+    {
+        "domain": "Operating Systems",
+        "difficulty": "Easy",
+        "questionText": "What is a thread?",
+        "answerKey": "A thread is a lightweight unit of a process that shares memory and resources with other threads in the same process.",
+        "tags": [
+            "thread",
+            "multithreading"
+        ]
+    },
+    {
+        "domain": "Operating Systems",
+        "difficulty": "Easy",
+        "questionText": "What is the difference between RAM and ROM?",
+        "answerKey": "RAM is volatile memory used for temporary data, while ROM is non-volatile and used for permanent instructions.",
+        "tags": [
+            "memory",
+            "ram",
+            "rom"
+        ]
+    },
+    {
+        "domain": "Operating Systems",
+        "difficulty": "Medium",
+        "questionText": "What is a context switch?",
+        "answerKey": "A context switch is the process of saving the state of one process or thread and loading the state of another.",
+        "tags": [
+            "context switch",
+            "cpu"
+        ]
+    },
+    {
+        "domain": "Operating Systems",
+        "difficulty": "Medium",
+        "questionText": "What is the difference between process and thread?",
+        "answerKey": "A process is independent and has its own memory; threads share memory within a process and are more lightweight.",
+        "tags": [
+            "process",
+            "thread",
+            "comparison"
+        ]
+    },
+    {
+        "domain": "Operating Systems",
+        "difficulty": "Medium",
+        "questionText": "Explain the difference between user space and kernel space.",
+        "answerKey": "User space is where user applications run, while kernel space is where the core of the OS runs with full access to hardware.",
+        "tags": [
+            "kernel",
+            "user space"
+        ]
+    },
+    {
+        "domain": "Operating Systems",
+        "difficulty": "Hard",
+        "questionText": "What is a deadlock? What are necessary conditions for deadlock?",
+        "answerKey": "Deadlock is a situation where processes wait indefinitely for resources. Conditions: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "tags": [
+            "deadlock",
+            "concurrency"
+        ]
+    },
+    {
+        "domain": "Operating Systems",
+        "difficulty": "Hard",
+        "questionText": "What is paging in memory management?",
+        "answerKey": "Paging divides memory into fixed-size pages to allow non-contiguous memory allocation. It helps avoid fragmentation.",
+        "tags": [
+            "paging",
+            "memory management"
+        ]
+    },
+    {
+        "domain": "Operating Systems",
+        "difficulty": "Hard",
+        "questionText": "What are different CPU scheduling algorithms?",
+        "answerKey": "Common algorithms include FCFS, SJF, Round Robin, Priority Scheduling. Each affects performance differently.",
+        "tags": [
+            "cpu",
+            "scheduling"
+        ]
+    },
+    {
+        "domain": "Operating Systems",
+        "difficulty": "Medium",
+        "questionText": "What is virtual memory and why is it used?",
+        "answerKey": "Virtual memory allows execution of processes not completely in physical memory using disk space. It helps run larger programs efficiently.",
+        "tags": [
+            "virtual memory",
+            "memory management"
+        ]
+    },
+    {
+        "domain": "Operating Systems",
+        "difficulty": "Hard",
+        "questionText": "How does the OS handle interrupts?",
+        "answerKey": "The OS pauses current execution, saves state, processes the interrupt, and resumes execution. It ensures responsiveness to hardware events.",
+        "tags": [
+            "interrupts",
+            "os"
+        ]
+    },
+    {
+        "domain": "Operating Systems",
+        "difficulty": "Hard",
+        "questionText": "How would you design a file system?",
+        "answerKey": "Design considerations include file structure, metadata management, access control, and performance optimization. Use trees or hash tables for indexing.",
+        "tags": [
+            "file system",
+            "design"
+        ]
+    },
+    {
+        "domain": "Web Development",
+        "difficulty": "Easy",
+        "questionText": "What does HTML stand for?",
+        "answerKey": "HTML stands for HyperText Markup Language, used to create the structure of web pages.",
+        "tags": [
+            "html",
+            "basics"
+        ]
+    },
+    {
+        "domain": "Web Development",
+        "difficulty": "Easy",
+        "questionText": "What is the purpose of CSS in web development?",
+        "answerKey": "CSS (Cascading Style Sheets) is used to style HTML elements and control layout, colors, fonts, etc.",
+        "tags": [
+            "css",
+            "styling"
+        ]
+    },
+    {
+        "domain": "Web Development",
+        "difficulty": "Medium",
+        "questionText": "What is the difference between class and id in HTML?",
+        "answerKey": "An id is unique and used to identify one element; a class can be shared by multiple elements.",
+        "tags": [
+            "html",
+            "selectors"
+        ]
+    },
+    {
+        "domain": "Web Development",
+        "difficulty": "Medium",
+        "questionText": "What is the difference between == and === in JavaScript?",
+        "answerKey": "== compares values with type coercion; === compares both value and type without coercion.",
+        "tags": [
+            "javascript",
+            "comparison"
+        ]
+    },
+    {
+        "domain": "Web Development",
+        "difficulty": "Medium",
+        "questionText": "What are semantic HTML tags? Give examples.",
+        "answerKey": "Semantic tags clearly describe their meaning in HTML. Examples: <article>, <section>, <footer>, <nav>.",
+        "tags": [
+            "html",
+            "semantic"
+        ]
+    },
+    {
+        "domain": "Web Development",
+        "difficulty": "Medium",
+        "questionText": "What is the virtual DOM in React?",
+        "answerKey": "The virtual DOM is a lightweight JS representation of the real DOM. React updates the real DOM efficiently by diffing.",
+        "tags": [
+            "react",
+            "virtual-dom"
+        ]
+    },
+    {
+        "domain": "Web Development",
+        "difficulty": "Hard",
+        "questionText": "Explain how event delegation works in JavaScript.",
+        "answerKey": "Event delegation involves using a single event listener on a parent element to manage events for its child elements using event bubbling.",
+        "tags": [
+            "javascript",
+            "events"
+        ]
+    },
+    {
+        "domain": "Web Development",
+        "difficulty": "Hard",
+        "questionText": "What is server-side rendering (SSR) and how is it implemented in Next.js?",
+        "answerKey": "SSR renders the page on the server before sending it to the client. In Next.js, it's done using getServerSideProps().",
+        "tags": [
+            "react",
+            "next.js",
+            "ssr"
+        ]
+    },
+    {
+        "domain": "Web Development",
+        "difficulty": "Hard",
+        "questionText": "Explain the difference between cookies, sessionStorage, and localStorage.",
+        "answerKey": "Cookies are sent with every request and expire based on settings. sessionStorage persists for a session. localStorage persists until cleared.",
+        "tags": [
+            "storage",
+            "browser"
+        ]
+    },
+    {
+        "domain": "Web Development",
+        "difficulty": "Hard",
+        "questionText": "What is CORS and why is it important in web development?",
+        "answerKey": "CORS (Cross-Origin Resource Sharing) is a security mechanism that controls how web pages can request resources from different domains.",
+        "tags": [
+            "cors",
+            "security"
+        ]
+    },
+    {
+        "domain": "Web Development",
+        "difficulty": "Hard",
+        "questionText": "How would you optimize a web application for performance?",
+        "answerKey": "Techniques include minimizing HTTP requests, using lazy loading, optimizing images, and leveraging caching.",
+        "tags": [
+            "performance",
+            "optimization"
+        ]
+    }
+]

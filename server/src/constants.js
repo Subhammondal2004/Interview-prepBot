@@ -1,1 +1,1 @@
-export const DB_NAME= "Interview-prep database"
+export const DB_NAME= "Interview-prep-database"
