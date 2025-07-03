@@ -18,5 +18,9 @@ app.use(express.urlencoded({extended: true}))
 app.use(express.static('public'))
 app.use(cookieParser())
 
+import userRoute from "./routers/auth-route.js"
+
+app.use("/api/v1/users", userRoute)
+
 
 export default app;
