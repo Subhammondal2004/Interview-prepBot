@@ -1,5 +1,22 @@
 import mongoose, { Schema } from "mongoose";
-import { Question } from "./question-model";
+
+const responseSchema = new Schema({
+    questionId:{
+        type: Schema.Types.ObjectId,
+        ref:"Question"
+    },
+    userResponse:{
+        type:String,
+        required: true
+    },
+    aiResponse:{
+        type:String
+    },
+    isCorrect:{
+        type: Boolean,
+        default: false
+    }
+},{ timestamps: true})
 
 const interviewSchema = new Schema({
     userId:{
@@ -10,14 +27,26 @@ const interviewSchema = new Schema({
         type:String,
         required: true
     },
-    Questions: [String],
-    userResponse: [string],
-    aiResponse: [String],
-
+    difficulty:{
+        type:String,
+        required:true
+    },
+    questions:[responseSchema],
     score:{
         type:Schema.Types.ObjectId,
         ref:"Score",
         required: true
+    },
+    isSubmitted:{
+        type: Boolean,
+        default: false
+    },
+    startTime:{
+        type: Date,
+        default: Date.now()
+    },
+    endTime:{
+        type: Date
     }
 })
 
