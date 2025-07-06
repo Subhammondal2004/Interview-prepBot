@@ -7,7 +7,6 @@ const responseSchema = new Schema({
     },
     userResponse:{
         type:String,
-        required: true
     },
     aiResponse:{
         type:String
@@ -15,8 +14,11 @@ const responseSchema = new Schema({
     isCorrect:{
         type: Boolean,
         default: false
+    },
+    feedback:{
+        type: String
     }
-},{ timestamps: true})
+})
 
 const interviewSchema = new Schema({
     userId:{
@@ -33,9 +35,9 @@ const interviewSchema = new Schema({
     },
     questions:[responseSchema],
     score:{
-        type:Schema.Types.ObjectId,
-        ref:"Score",
-        required: true
+        type: Number,
+        required: true,
+        default: 0
     },
     isSubmitted:{
         type: Boolean,
@@ -47,6 +49,10 @@ const interviewSchema = new Schema({
     },
     endTime:{
         type: Date
+    },
+    duration:{
+        type:Number,
+        default: 0
     }
 })
 

@@ -4,10 +4,12 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import apiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 import { Schema } from "mongoose";
+import { evaulateAnswersAi } from "./ai-controller.js";
 
 
 const startInterviewSession = asyncHandler(async (req, res) => {
-    const { userId, domain, difficulty } = req.body;
+    const { domain, difficulty } = req.body;
+    const userId = req.user?._id;
 
     if ([userId, domain, difficulty].some((field) => field?.trim === "")) {
         throw new apiError(400, "All fields are required!")
@@ -31,6 +33,13 @@ const startInterviewSession = asyncHandler(async (req, res) => {
             $sample: {
                 size: 5
             }
+        },
+        {
+            $project: {
+                questionText: 1,
+                domain: 1,
+                difficulty: 1,
+            }
         }
     ])
 
@@ -38,7 +47,9 @@ const startInterviewSession = asyncHandler(async (req, res) => {
         userId,
         domain,
         difficulty,
-        questions: questions.map(q => q?._id),
+        questions: questions.map((question) => ({
+            questionId: question?._id,
+        })),
         startTime: new Date()
     })
 
@@ -66,7 +77,7 @@ const submitInterviewSession = asyncHandler(async (req, res) => {
 
     for (const ans of answers) {
         answerStored.push({
-            questionId: ans?._questionId,
+            questionId: ans?.questionId,
             userResponse: ans?.userResponse
         })
     }
@@ -85,14 +96,44 @@ const submitInterviewSession = asyncHandler(async (req, res) => {
         }
     )
 
-    //TODOS: ai evaulation is required
+    let score = 0;
+    const evaluatedAnswers = [];
+
+    for (const question of submittedSession.questions) {
+        const questionData = await Question.findById(question.questionId);
+        if (!questionData) {
+            throw new apiError(400, "Invalid question ID in answers");
+        }
+        const evaluation = await evaulateAnswersAi(
+            questionData.questionText,
+            question.userResponse,
+            questionData.answerKey
+        );
+
+        console.log(evaluation);
+
+        evaluatedAnswers.push({
+            questionId: question.questionId,
+            userResponse: question.userResponse,
+            aiResponse: evaluation.message.aiResponse,
+            isCorrect:evaluation.message.score >= 3, // Assuming score >= 3 is considered correct
+            feedback: evaluation.message.feedback
+        });
+        score += evaluation.message.score; // Accumulate the score
+    }
+    submittedSession.questions = evaluatedAnswers;
+    submittedSession.score = score;
+    submittedSession.duration = (submittedSession.endTime - submittedSession.startTime)/(1000*60);
+    await submittedSession.save();
 
     return res
         .status(200)
         .json(
             new ApiResponse(
                 200,
-                [],
+                {
+                    submittedSession,
+                },
                 "Session submitted successfully!!!"
             )
         )
@@ -151,26 +192,26 @@ const getInterviewSessionById = asyncHandler(async (req, res) => {
                 userId: {
                     $first: "$_id"
                 },
-                domain:{
+                domain: {
                     $first: "$domain"
                 },
-                difficulty:{
+                difficulty: {
                     $first: "$difficulty"
                 },
-                questions:{
-                    $push:{
+                questions: {
+                    $push: {
                         questionId: "$questions.questionData",
                         userResponse: "$questions.userResponse"
                     }
                 },
-                isSubmitted:{
+                isSubmitted: {
                     $first: "$isSubmitted"
                 }
             }
         },
         {
-            $addFields:{
-                username:{
+            $addFields: {
+                username: {
                     $first: "$username"
                 }
             }
@@ -178,23 +219,23 @@ const getInterviewSessionById = asyncHandler(async (req, res) => {
     ])
 
     return res
-    .status(200)
-    .json(
-        new ApiResponse(
-            200,
-            interviewSession,
-            "Interview Session fetched successfully!!!"
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                interviewSession,
+                "Interview Session fetched successfully!!!"
+            )
         )
-    )
 })
 
-const getAllSessionForUser = asyncHandler(async (req, res) => {
+// const getAllSessionForUser = asyncHandler(async (req, res) => {
 
-})
+// })
 
 export {
     startInterviewSession,
     submitInterviewSession,
     getInterviewSessionById,
-    getAllSessionForUser
+    // getAllSessionForUser
 }

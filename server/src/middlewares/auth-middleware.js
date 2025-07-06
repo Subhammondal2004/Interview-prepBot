@@ -16,7 +16,6 @@ const verifyjwt = asyncHandler(async (req, _, next) => {
         if (!decodedInfo) {
             throw new apiError(400, "Invaild Tokens or expired Tokens!!")
         }
-
         const user = await User.findById(decodedInfo?._id).select("-refreshToken -password")
 
         if (!user) {
