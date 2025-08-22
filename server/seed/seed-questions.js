@@ -12,17 +12,13 @@ async function seedDB() {
   try {
     await connectionDB ();
 
-    // Optional: clear existing data
-    // await Question.deleteMany({});
-    // console.log("🗑️ Old questions deleted");
-
-    // Insert new data
+   // Insert new data
     await Question.insertMany(questions);
-    console.log(`✅ Inserted ${questions.length} questions`);
+    console.log(`Inserted ${questions.length} questions`);
 
     process.exit(0);
   } catch (error) {
-    console.error("❌ Error seeding database:", error);
+    console.error("Error seeding database:", error);
     process.exit(1);
   }
 }
