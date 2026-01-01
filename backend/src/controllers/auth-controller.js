@@ -3,6 +3,7 @@ import apiResponse from "../utils/apiResponse.js";
 import apiError from "../utils/apiError.js";
 import { User } from "../models/user-model.js";
 import jwt from "jsonwebtoken";
+import ApiResponse from "../utils/apiResponse.js";
 
 
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -28,7 +29,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body;
 
-    if ([username, email, password].some((field) => field?.trim === "")) {
+    if ([username, email, password].some((field) => field?.trim()=== "")) {
         throw new apiError(400, "All fileds are required!!")
     }
 
@@ -40,9 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new apiError(400, "Password must be atleast 8 characters and should not contain spaces!!")
     }
 
-    const userExists = await User.findOne({
-        $or: [{ username }, { email }]
-    })
+    const userExists = await User.findOne({ email })
 
     if (userExists) {
         throw new apiError(400, "User already exists, please try to login!!")
@@ -56,8 +55,18 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const createdUser = await User.findById(user._id).select("-refreshToken -password")
 
+     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(createdUser._id)
+
+     const options ={
+        httpOnly: true,
+        secure: true,
+        sameSite: "none"
+     }
+
     return res
         .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
         .json(
             new apiResponse(
                 200,
@@ -68,25 +77,25 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 const loginUser = asyncHandler(async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    if ([username, password].some((field) => field?.trim === "")) {
+    if ([ email, password].some((field) => field?.trim()=== "")) {
         throw new apiError(400, "All fields are required!!")
     }
 
-    if (password.length < 8 && password.includes("")) {
+    if (password.length < 8 && password.includes(" ")) {
         throw new apiError(400, "Password must be atleast 8 characters and should not contain spaces!!")
     }
 
     const user = await User.findOne({
-        username
+        email
     })
 
     if (!user) {
         throw new apiError(400, "User doesnot exists!!")
     }
 
-    const passwordCompare = await user.isPasswordCorrect(password)
+    const passwordCompare = await user.isPasswordCorrect(password);
 
     if (!passwordCompare) {
         throw new apiError(401, "Invaild password")
@@ -98,7 +107,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: "none"
     }
 
     return res
@@ -149,7 +159,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 })
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-    const incomingToken = req.cookie?.refreshToken || req.body?.refreshToken;
+    const incomingToken = req.cookies?.refreshToken || req.body?.refreshToken;
 
     if (!incomingToken) {
         throw new apiError(401, "Unauthorized request!!")
@@ -195,9 +205,88 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 })
 
+const loggedInUser = asyncHandler(async(req, res)=>{
+    const user =  await User.findById(req.user._id).select("-password");
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            user,
+            "User fetched successfully!!"
+        )
+    )
+})
+
+const forgotPassword  = asyncHandler(async(req, res)=>{
+    const { email, oldPassword, newPassword } = req.body;
+    if([oldPassword, newPassword].some((field) => field?.trim() === "")){
+        throw new apiError(400, "All fields are required!")
+    }
+    const user = await User.findOne({ email });
+    if(!user){
+        throw new apiError(404, "User not found!")
+    }
+
+    if (newPassword.length < 8 && newPassword.includes(" ")) {
+        throw new apiError(400, "Password must be atleast 8 characters and should not contain spaces!!")
+    }
+
+    const updatedUser = await User.findById(user._id)
+    updatedUser.password = newPassword;
+    await updatedUser.save();
+
+    return res
+    .status(200)
+    .json(
+        new apiResponse(
+            200,
+            {},
+            "Password updated successfully!!"
+        )
+    )
+})
+
+const updateProfile =  asyncHandler(async(req, res)=>{
+    const {username, jobTitle, bio, location } = req.body;
+    
+    if([username, jobTitle, bio, location].some((field) => field?.trim() === "")){
+        throw new apiError(400, "All fields are required!")
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set:{
+                username,
+                jobTitle,
+                location,
+                bio
+            }
+        },
+        {
+            new: true
+        }
+    )
+
+    return res
+    .status(200)
+    .json(
+        new apiResponse(
+            200,
+            updatedUser,
+            "Profile updated successfully!"
+        )
+    )
+})
+
 export {
     registerUser,
     loginUser,
     logoutUser,
-    refreshAccessToken
+    refreshAccessToken,
+    loggedInUser,
+    forgotPassword,
+    updateProfile
 }

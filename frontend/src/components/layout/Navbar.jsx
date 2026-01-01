@@ -1,7 +1,11 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext'; 
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Home, BookOpen, History, BarChart3, Brain, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import axios from 'axios';
+import { useToast } from '@/hooks/use-toast';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: Home },
@@ -13,11 +17,38 @@ const navItems = [
 export function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const { toast } = useToast();
+  const URL = import.meta.env.VITE_SERVER_URL;
 
   const handleLogout = () => {
-    navigate('/');
+    axios.get(`${URL}/users/logout`,
+      {
+        withCredentials: true
+      }
+    ).then((res)=>{
+      toast({
+        description: res.data.message,
+        variant: "success",
+        duration: 2000,
+      })
+      logout();
+      navigate('/');
+    }).catch((error)=>{
+      toast({
+        description: error.response.data.message,
+        variant: "error",
+        duration: 2000,
+      })
+    })
   };
-  return (
+
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-card/80 backdrop-blur-lg">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
@@ -50,14 +81,24 @@ export function Navbar() {
               );
             })}
             
+            <Link 
+              to="/profile"
+              className="ml-2 flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-muted transition-all duration-200"
+            >
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                  {getInitials(user?.username)}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={handleLogout}
-              className="ml-2 text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground"
             >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
+              <LogOut className="h-4 w-4" />
             </Button>
           </div>
 
@@ -82,6 +123,17 @@ export function Navbar() {
               );
             })}
             
+            <Link 
+              to="/profile"
+              className="flex items-center justify-center p-1 rounded-lg hover:bg-muted transition-all duration-200"
+            >
+              <Avatar className="h-7 w-7">
+                <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                  {getInitials(user?.username)}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+
             <button
               onClick={handleLogout}
               className="flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200"

@@ -6,7 +6,6 @@ const userSchema = new Schema({
     username:{
         type:String,
         required: true,
-        unique: true,
         trim: true
     },
     email:{
@@ -17,6 +16,15 @@ const userSchema = new Schema({
     password:{
         type:String,
         required: true
+    },
+    jobTitle:{
+        type: String
+    },
+    location:{
+        type: String
+    },
+    bio:{
+        type: String
     },
     refreshToken:{
         type:String,
