@@ -1,8 +1,22 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-export function CategoryCard({ id, name, icon, questionsCount, averageScore, className }) {
+export function CategoryCard({ id, name, icon, averageScore, className }) {
+  const [totalquestions, setTotalQuestions ] = useState(0);
+  const URL = import.meta.env.VITE_SERVER_URL;
+  console.log(averageScore)
+  useEffect(()=>{
+    async function fetch(){
+      await axios.get(`${URL}/questions/question/${name}`)
+      .then((res)=>{
+        setTotalQuestions(res.data.data.totalquestion);
+      })
+    }
+    fetch();
+  },[])
   return (
     <Link
       to={`/practice?category=${id}`}
@@ -20,10 +34,10 @@ export function CategoryCard({ id, name, icon, questionsCount, averageScore, cla
       
       <div className="mt-4 space-y-1">
         <h3 className="text-base font-semibold text-foreground">{name}</h3>
-        <p className="text-sm text-muted-foreground">{questionsCount} questions</p>
+        <p className="text-sm text-muted-foreground">{totalquestions} questions</p>
       </div>
       
-      {averageScore !== undefined && (
+      {averageScore !== 0 && (
         <div className="mt-4 pt-4 border-t border-border">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Your avg. score</span>

@@ -1,21 +1,40 @@
-import { Layout } from '@/components/layout/Layout';
-import { StatsCard } from '@/components/dashboard/StatsCard';
-import { RecentActivity } from '@/components/dashboard/RecentActivity';
-import { CategoryCard } from '@/components/dashboard/CategoryCard';
-import { Button } from '@/components/ui/button';
-import { mockSessions, categories, categoryStats } from '@/data/mockData';
-import { BookOpen, Target, TrendingUp, Clock, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Layout } from "@/components/layout/Layout";
+import { StatsCard } from "@/components/dashboard/StatsCard";
+import { RecentActivity } from "@/components/dashboard/RecentActivity";
+import { CategoryCard } from "@/components/dashboard/CategoryCard";
+import { Button } from "@/components/ui/button";
+import { mockSessions, categories, categoryStats } from "@/data/mockData";
+import { BookOpen, Target, TrendingUp, Clock, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function Index() {
-  const totalQuestions = categoryStats.reduce((acc, cat) => acc + cat.totalQuestions, 0);
-  const overallAverage = Math.round(
-    categoryStats.reduce((acc, cat) => acc + cat.averageScore, 0) / categoryStats.length
-  );
-  const totalSessions = mockSessions.length;
   const avgImprovement = Math.round(
-    categoryStats.reduce((acc, cat) => acc + cat.improvement, 0) / categoryStats.length
+    categoryStats.reduce((acc, cat) => acc + cat.improvement, 0) /
+      categoryStats.length
   );
+  const [totalQuestions, setTotalQuestions] = useState(0);
+  const [avgScore, setAvgScore] = useState("");
+  const [totalSessions, setTotalSession] = useState(0);
+  const [ domainScore, setDomainScore ] = useState([]);
+ 
+  const URL = import.meta.env.VITE_SERVER_URL;
+
+  useEffect(() => {
+    async function fetchData() {
+      await axios
+        .get(`${URL}/sessions/all-sessions`, { withCredentials: true })
+        .then((res) => {
+          setTotalQuestions(res.data.data.totalQuestions);
+          setAvgScore(res.data.data.avgScore);
+          setTotalSession(res.data.data.totalSessions);
+          setDomainScore(res.data.data.domainAvgScore);
+        });
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <Layout>
@@ -28,7 +47,8 @@ export default function Index() {
                 Master Your Interview Skills
               </h1>
               <p className="text-lg text-muted-foreground mb-6">
-                Practice with AI-powered feedback, track your progress, and land your dream job.
+                Practice with AI-powered feedback, track your progress, and land
+                your dream job.
               </p>
               <Link to="/practice">
                 <Button variant="gradient" size="lg" className="gap-2">
@@ -50,7 +70,7 @@ export default function Index() {
           />
           <StatsCard
             title="Average Score"
-            value={`${overallAverage}%`}
+            value={`${avgScore}%`}
             icon={<Target className="h-6 w-6" />}
             trend={{ value: avgImprovement, isPositive: true }}
           />
@@ -73,24 +93,27 @@ export default function Index() {
           {/* Categories */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-foreground">Practice Categories</h2>
-              <Link to="/practice" className="text-sm text-primary hover:underline">
+              <h2 className="text-xl font-semibold text-foreground">
+                Practice Categories
+              </h2>
+              <Link
+                to="/practice"
+                className="text-sm text-primary hover:underline"
+              >
                 View all →
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {categories.map((category) => {
-                const stats = categoryStats.find(
-                  s => s.category.toLowerCase() === category.name.toLowerCase()
-                );
+                let avgScore = "";
+                domainScore.map((d) => d.domain === category.name ? avgScore = d.avgScore : 0);
                 return (
                   <CategoryCard
                     key={category.id}
                     id={category.id}
                     name={category.name}
                     icon={category.icon}
-                    questionsCount={stats?.totalQuestions || 0}
-                    averageScore={stats?.averageScore}
+                    averageScore={avgScore === "" ? '0' : avgScore}
                   />
                 );
               })}

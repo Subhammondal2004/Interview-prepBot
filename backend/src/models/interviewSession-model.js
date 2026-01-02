@@ -17,6 +17,10 @@ const responseSchema = new Schema({
     },
     feedback:{
         type: String
+    },
+    score:{
+        type: Number,
+        default: 0
     }
 })
 

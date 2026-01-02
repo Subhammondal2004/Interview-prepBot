@@ -1,9 +1,9 @@
 export const categories = [
-  { id: 'behavioral', name: 'Behavioral', icon: '💬', color: 'hsl(var(--chart-1))' },
-  { id: 'technical', name: 'Technical', icon: '💻', color: 'hsl(var(--chart-2))' },
-  { id: 'situational', name: 'Situational', icon: '🎯', color: 'hsl(var(--chart-3))' },
-  { id: 'leadership', name: 'Leadership', icon: '👥', color: 'hsl(var(--chart-4))' },
-  { id: 'problem-solving', name: 'Problem Solving', icon: '🧩', color: 'hsl(var(--chart-5))' },
+  { id: 'Web-development', name: 'Web Development', icon: '💬', color: 'hsl(var(--chart-1))' },
+  { id: 'data-structures', name: 'Data Structures', icon: '💻', color: 'hsl(var(--chart-2))' },
+  { id: 'hr', name: 'HR', icon: '🎯', color: 'hsl(var(--chart-3))' },
+  { id: 'database', name: 'Database', icon: '👥', color: 'hsl(var(--chart-4))' },
+  { id: 'operating-systems', name: 'Operating Systems', icon: '🧩', color: 'hsl(var(--chart-5))' },
 ];
 
 export const questions = [

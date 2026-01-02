@@ -34,10 +34,27 @@ const questionSet = asyncHandler(async(req, res)=>{
 
 })
 
-// const getNextQues =  asyncHandler (async (req, res) =>{
+const getQuestions = asyncHandler(async(req, res)=>{
+    const { domain } = req.params;
+    if(!domain){
+        throw new apiError(400, "All fields are required!")
+    }
 
-// })
+    const question = await Question.find({ domain });
+    const totalquestion = question.length;
+
+    return res
+    .status(200)
+    .json(
+        new apiResponse(
+            200,
+            { question, totalquestion },
+            "Questions fetched successfully!!"
+        )
+    )
+})
 
 export{
-    questionSet
+    questionSet,
+    getQuestions
 }

@@ -25,28 +25,22 @@ async function generateApiResponse(prompt) {
           "aiResponse": "Optional – short version of the ideal answer if the answer is incorrect or partially correct."
         }`
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.5-flash-lite",
       contents: [
         { role: "system", text: systemInstruction },
         { role: "user", text: prompt },     
       ],
     });
-
-     // ✅ Correctly access response text from nested structure
     const text = response?.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!text) {
-      console.error("Invalid Gemini response structure:", response);
       throw new Error("Gemini API returned an invalid or empty response.");
     }
 
-    // ✅ Clean and parse the JSON block
     const jsonString = text.replace(/```json|```/g, "").trim();
     const fixedJson = jsonString.replace(/"score":\s*([\d.]+)\/5/, (_, val) => `"score": ${val}`);
 
     const parsed = JSON.parse(fixedJson);
-
-    console.log("AI Response:", parsed);
     return parsed; // { score, feedback, aiResponse }
 
   } catch (error) {
