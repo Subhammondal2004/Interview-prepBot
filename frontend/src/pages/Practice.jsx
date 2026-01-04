@@ -35,13 +35,6 @@ export default function Practice() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedSession, setSubmittedSession] = useState(null);
 
-  // Get questions based on domain and difficulty
-  // const sessionQuestions = questions.filter(q => {
-  //   const matchesDomain = domain === 'all' || q.category === domain;
-  //   const matchesDifficulty = !difficulty || q.difficulty === difficulty;
-  //   return matchesDomain && matchesDifficulty;
-  // });
-
   const currentQuestion = questions[currentQuestionIndex];
   const currentAnswer =
     answers.find((a) => a.questionId === currentQuestion._id)?.answer || "";
@@ -70,13 +63,6 @@ export default function Practice() {
         setIsStarting(false);
       });
   };
-
-  // const handleAnswerChange = (questionId, answer) => {
-  //   setAnswers((prev) => ({
-  //     ...prev,
-  //     [questionId]: answer,
-  //   }));
-  // };
 
   const handleAnswerChange = (questionId, answer) => {
     setAnswers((prev) => {
@@ -262,9 +248,7 @@ export default function Practice() {
                     Question {index + 1}
                   </span>
                   <h3 className="text-lg font-semibold text-foreground mt-1">
-                    {questions.map((q) =>
-                      q._id === answer.questionId ? q.questionText : ""
-                    )}
+                    { answer.questionText }
                   </h3>
                   <p className="text-sm text-muted-foreground mt-2">
                     <span className="font-medium">Your Answer:</span>{" "}

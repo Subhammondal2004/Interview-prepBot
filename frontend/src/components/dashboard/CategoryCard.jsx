@@ -7,7 +7,6 @@ import axios from 'axios';
 export function CategoryCard({ id, name, icon, averageScore, className }) {
   const [totalquestions, setTotalQuestions ] = useState(0);
   const URL = import.meta.env.VITE_SERVER_URL;
-  console.log(averageScore)
   useEffect(()=>{
     async function fetch(){
       await axios.get(`${URL}/questions/question/${name}`)

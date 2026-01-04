@@ -26,7 +26,7 @@ export function CategoryBreakdown({ data }) {
             />
             <YAxis 
               type="category" 
-              dataKey="category" 
+              dataKey="domain" 
               stroke="hsl(var(--muted-foreground))"
               fontSize={12}
               tickLine={false}
@@ -42,7 +42,7 @@ export function CategoryBreakdown({ data }) {
               labelStyle={{ color: 'hsl(var(--foreground))' }}
               formatter={(value) => [`${value}%`, 'Average Score']}
             />
-            <Bar dataKey="averageScore" radius={[0, 4, 4, 0]}>
+            <Bar dataKey="score" radius={[0, 4, 4, 0]}>
               {data.map((_, index) => (
                 <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
               ))}

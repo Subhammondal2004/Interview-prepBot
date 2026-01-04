@@ -5,6 +5,9 @@ const responseSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref:"Question"
     },
+    questionText:{
+        type: String
+    },
     userResponse:{
         type:String,
     },

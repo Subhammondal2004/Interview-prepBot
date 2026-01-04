@@ -3,7 +3,7 @@ import { StatsCard } from "@/components/dashboard/StatsCard";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { CategoryCard } from "@/components/dashboard/CategoryCard";
 import { Button } from "@/components/ui/button";
-import { mockSessions, categories, categoryStats } from "@/data/mockData";
+import { categories, categoryStats } from "@/data/mockData";
 import { BookOpen, Target, TrendingUp, Clock, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -24,7 +24,7 @@ export default function Index() {
   useEffect(() => {
     async function fetchData() {
       await axios
-        .get(`${URL}/sessions/all-sessions`, { withCredentials: true })
+        .get(`${URL}/sessions/monthly-sessions-details`, { withCredentials: true })
         .then((res) => {
           setTotalQuestions(res.data.data.totalQuestions);
           setAvgScore(res.data.data.avgScore);
@@ -122,7 +122,7 @@ export default function Index() {
 
           {/* Recent Activity */}
           <div className="lg:col-span-1">
-            <RecentActivity sessions={mockSessions} />
+            <RecentActivity />
           </div>
         </div>
       </div>

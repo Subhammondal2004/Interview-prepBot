@@ -3,7 +3,9 @@ import {
     startInterviewSession,
     submitInterviewSession,
     getInterviewSessionById,
-    getAllSessionForUser
+    getAllSessionDetails,
+    getAllUserSessions,
+    getMonthlySessionDetails
 } from "../controllers/session-controller.js";
 import { verifyjwt } from "../middlewares/auth-middleware.js";
 
@@ -11,7 +13,10 @@ const router = express.Router()
 
 router.route("/start-session").post(verifyjwt, startInterviewSession)
 router.route("/submit").post(verifyjwt, submitInterviewSession)
-router.route("/interview-session/:sessionId").get(verifyjwt, getInterviewSessionById)
-router.route("/all-sessions").get(verifyjwt, getAllSessionForUser)
+router.route("/all-user-sessions").get(verifyjwt, getAllUserSessions)
+router.route("/id/:sessionId").get(verifyjwt, getInterviewSessionById)
+router.route("/all-sessions-details").get(verifyjwt, getAllSessionDetails)
+router.route("/monthly-sessions-details").get(verifyjwt, getMonthlySessionDetails)
+
 
 export default router;

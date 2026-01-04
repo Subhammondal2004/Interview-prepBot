@@ -40,6 +40,7 @@ const startInterviewSession = asyncHandler(async (req, res) => {
         questionText: 1,
         domain: 1,
         difficulty: 1,
+        answerKey:1,
       },
     },
   ]);
@@ -112,6 +113,7 @@ const submitInterviewSession = asyncHandler(async (req, res) => {
 
     evaluatedAnswers.push({
       questionId: question.questionId,
+      questionText: questionData.questionText,
       userResponse: question.userResponse,
       aiResponse: evaluation.message.aiResponse,
       isCorrect: evaluation.message.score >= 3, // Assuming score >= 3 is considered correct
@@ -200,10 +202,12 @@ const getInterviewSessionById = asyncHandler(async (req, res) => {
         questions: {
           $push: {
             questionId: "$questions.questionId",
+            questionText: "$questions.questionText",
             userResponse: "$questions.userResponse",
             aiResponse: "$questions.aiResponse",
             feedback: "$questions.feedback",
             isCorrect: "$questions.isCorrect",
+            score: "$questions.score"
           },
         },
         isSubmitted: {
@@ -222,21 +226,7 @@ const getInterviewSessionById = asyncHandler(async (req, res) => {
           $first: "$duration",
         },
       },
-    },
-    {
-      $addFields: {
-        question: {
-          $first: "$questionData.questionText",
-        },
-      },
-    },
-    // {
-    //     $addFields: {
-    //         username: {
-    //             $first: "$User.username"
-    //         }
-    //     }
-    // }
+    }
   ]);
 
   return res
@@ -250,11 +240,12 @@ const getInterviewSessionById = asyncHandler(async (req, res) => {
     );
 });
 
-const getAllSessionForUser = asyncHandler(async (req, res) => {
+const getAllSessionDetails = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) {
     throw new apiError(400, "User ID is required");
   }
+
   const sessions = await Interview.find({ userId });
 
   const uniqueQuestionIds = new Set();
@@ -272,7 +263,7 @@ const getAllSessionForUser = asyncHandler(async (req, res) => {
     totalQs += questionCount;
     totalScore += session.score;
 
-    session.questions.forEach(q => {
+    session.questions.forEach((q) => {
       if (q.questionId) {
         uniqueQuestionIds.add(q.questionId.toString());
       }
@@ -289,25 +280,36 @@ const getAllSessionForUser = asyncHandler(async (req, res) => {
     domainStats[domain].totalQuestions += questionCount;
   });
 
+  let bestDomain = null;
+  let bestDomainScore = 0;
+
   const domainAvgScore = Object.entries(domainStats).map(
-    ([domain, stats]) => ({
-      domain,
-      avgScore:
+    ([domain, stats]) => {
+      const percentage =
         stats.totalQuestions > 0
           ? Number(
-              (
-                (stats.totalScore / (stats.totalQuestions * 10)) *
-                100
-              )
-            ).toFixed(1)
-          : 0,
-    })
+              ((stats.totalScore / (stats.totalQuestions * 10)) * 100).toFixed(1)
+            )
+          : 0;
+
+      // find best domain
+      if (percentage > bestDomainScore) {
+        bestDomainScore = percentage;
+        bestDomain = domain;
+      }
+
+      return {
+        domain,
+        score: percentage,
+        totalQuestions: stats.totalQuestions
+      };
+    }
   );
 
-  const totalSessions = sessions.filter(s => s.isSubmitted).length;
-  const totalQuestions = uniqueQuestionIds.size;
+  const totalSessions = sessions.filter((s) => s.isSubmitted).length;
+  const totalQuestions = totalQs;
 
-  const avgScore =
+  const overallScore =
     totalQs > 0
       ? Number(((totalScore / (totalQs * 10)) * 100)).toFixed(1)
       : 0;
@@ -318,7 +320,13 @@ const getAllSessionForUser = asyncHandler(async (req, res) => {
       {
         totalSessions,
         totalQuestions,
-        avgScore,
+        overallScore,
+        bestDomain: bestDomain
+          ? {
+              domain: bestDomain,
+              score: bestDomainScore,
+            }
+          : null,
         domainAvgScore,
       },
       "Sessions fetched successfully!!!"
@@ -327,9 +335,119 @@ const getAllSessionForUser = asyncHandler(async (req, res) => {
 });
 
 
+const getAllUserSessions = asyncHandler(async (req, res)=>{
+  const userId = req.user._id;
+  if(!userId){
+    throw new apiError(400, "User need to Login or require vaild ID!")
+  }
+
+  const sessions =  await Interview.find({ userId });
+
+  return res
+  .status(200)
+  .json(
+    new ApiResponse(
+      200,
+      sessions,
+      "All user sessions fetched successfully!"
+    )
+  )
+})
+
+const getMonthlySessionDetails = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+  if (!userId) {
+    throw new apiError(400, "User ID is required");
+  }
+
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+  const sessions = await Interview.find({
+    userId,
+    startTime: {
+      $gte: startOfMonth,
+      $lt: startOfNextMonth,
+    },
+  });
+
+  const uniqueQuestionIds = new Set();
+  let totalScore = 0;
+  let totalQs = 0;
+  let totalSessions = 0;
+
+  const domainStats = {};
+
+  sessions.forEach((session) => {
+    if (!session.isSubmitted) return;
+
+    totalSessions++;
+
+    const domain = session.domain || "Unknown";
+    const questionCount = session.questions.length;
+
+    totalQs += questionCount;
+    totalScore += session.score;
+
+    session.questions.forEach((q) => {
+      if (q.questionId) {
+        uniqueQuestionIds.add(q.questionId.toString());
+      }
+    });
+
+    if (!domainStats[domain]) {
+      domainStats[domain] = {
+        totalScore: 0,
+        totalQuestions: 0,
+      };
+    }
+
+    domainStats[domain].totalScore += session.score;
+    domainStats[domain].totalQuestions += questionCount;
+  });
+
+  // 📊 Domain-wise average
+  const domainAvgScore = Object.entries(domainStats).map(
+    ([domain, stats]) => ({
+      domain,
+      avgScore:
+        stats.totalQuestions > 0
+          ? Number(
+              ((stats.totalScore / (stats.totalQuestions * 10)) * 100)
+            ).toFixed(1)
+          : "0.0",
+    })
+  );
+
+  const totalQuestions = uniqueQuestionIds.size;
+
+  const avgScore =
+    totalQs > 0
+      ? Number(((totalScore / (totalQs * 10)) * 100)).toFixed(1)
+      : "0.0";
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        month: now.toLocaleString("default", { month: "long" }),
+        year: now.getFullYear(),
+        totalSessions,
+        totalQuestions,
+        avgScore,
+        domainAvgScore,
+      },
+      "Current month session analytics fetched successfully"
+    )
+  );
+});
+
 export {
   startInterviewSession,
   submitInterviewSession,
   getInterviewSessionById,
-  getAllSessionForUser,
+  getAllSessionDetails,
+  getAllUserSessions,
+  getMonthlySessionDetails
 };
