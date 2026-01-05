@@ -1,8 +1,13 @@
 import { Layout } from "@/components/layout/Layout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
+import { Leaderboard } from "@/components/analytics/Leaderboard";
 import { PerformanceChart } from "@/components/analytics/PerformanceChart";
 import { CategoryBreakdown } from "@/components/analytics/CategoryBreakdown";
-import { performanceData, categoryStats } from "@/data/mockData";
+import {
+  leaderboardData,
+  categoryStats,
+  performanceData,
+} from "@/data/mockData";
 import { TrendingUp, Target, Award, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import axios from "axios";
@@ -16,7 +21,7 @@ export default function Analytics() {
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [overallAverage, setOverallAverage] = useState("");
   const [domainScore, setDomainScore] = useState([]);
-  const [bestDomain, setBestDomain ] = useState(null);
+  const [bestDomain, setBestDomain] = useState(null);
   const URL = import.meta.env.VITE_SERVER_URL;
 
   useEffect(() => {
@@ -24,11 +29,10 @@ export default function Analytics() {
       await axios
         .get(`${URL}/sessions/all-sessions-details`, { withCredentials: true })
         .then((res) => {
-          console.log(res.data);
           setTotalQuestions(res.data.data.totalQuestions);
           setOverallAverage(res.data.data.overallScore);
           setDomainScore(res.data.data.domainAvgScore);
-          setBestDomain(res.data.data.bestDomain)
+          setBestDomain(res.data.data.bestDomain);
         });
     }
     fetchAllSessions();
@@ -77,8 +81,11 @@ export default function Analytics() {
 
         {/* Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <PerformanceChart data={performanceData} />
-          <CategoryBreakdown data={domainScore} />
+          <Leaderboard data={leaderboardData} />
+          <div>
+            <PerformanceChart data={performanceData} />
+            <CategoryBreakdown data={domainScore} />
+          </div>
         </div>
 
         {/* Detailed Stats Table */}

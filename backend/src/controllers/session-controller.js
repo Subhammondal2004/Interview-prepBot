@@ -40,7 +40,7 @@ const startInterviewSession = asyncHandler(async (req, res) => {
         questionText: 1,
         domain: 1,
         difficulty: 1,
-        answerKey:1,
+        answerKey: 1,
       },
     },
   ]);
@@ -207,7 +207,7 @@ const getInterviewSessionById = asyncHandler(async (req, res) => {
             aiResponse: "$questions.aiResponse",
             feedback: "$questions.feedback",
             isCorrect: "$questions.isCorrect",
-            score: "$questions.score"
+            score: "$questions.score",
           },
         },
         isSubmitted: {
@@ -226,7 +226,7 @@ const getInterviewSessionById = asyncHandler(async (req, res) => {
           $first: "$duration",
         },
       },
-    }
+    },
   ]);
 
   return res
@@ -283,36 +283,32 @@ const getAllSessionDetails = asyncHandler(async (req, res) => {
   let bestDomain = null;
   let bestDomainScore = 0;
 
-  const domainAvgScore = Object.entries(domainStats).map(
-    ([domain, stats]) => {
-      const percentage =
-        stats.totalQuestions > 0
-          ? Number(
-              ((stats.totalScore / (stats.totalQuestions * 10)) * 100).toFixed(1)
-            )
-          : 0;
+  const domainAvgScore = Object.entries(domainStats).map(([domain, stats]) => {
+    const percentage =
+      stats.totalQuestions > 0
+        ? Number(
+            ((stats.totalScore / (stats.totalQuestions * 10)) * 100).toFixed(1)
+          )
+        : 0;
 
-      // find best domain
-      if (percentage > bestDomainScore) {
-        bestDomainScore = percentage;
-        bestDomain = domain;
-      }
-
-      return {
-        domain,
-        score: percentage,
-        totalQuestions: stats.totalQuestions
-      };
+    // find best domain
+    if (percentage > bestDomainScore) {
+      bestDomainScore = percentage;
+      bestDomain = domain;
     }
-  );
+
+    return {
+      domain,
+      score: percentage,
+      totalQuestions: stats.totalQuestions,
+    };
+  });
 
   const totalSessions = sessions.filter((s) => s.isSubmitted).length;
   const totalQuestions = totalQs;
 
   const overallScore =
-    totalQs > 0
-      ? Number(((totalScore / (totalQs * 10)) * 100)).toFixed(1)
-      : 0;
+    totalQs > 0 ? Number((totalScore / (totalQs * 10)) * 100).toFixed(1) : 0;
 
   return res.status(200).json(
     new ApiResponse(
@@ -334,25 +330,20 @@ const getAllSessionDetails = asyncHandler(async (req, res) => {
   );
 });
 
-
-const getAllUserSessions = asyncHandler(async (req, res)=>{
+const getAllUserSessions = asyncHandler(async (req, res) => {
   const userId = req.user._id;
-  if(!userId){
-    throw new apiError(400, "User need to Login or require vaild ID!")
+  if (!userId) {
+    throw new apiError(400, "User need to Login or require vaild ID!");
   }
 
-  const sessions =  await Interview.find({ userId });
+  const sessions = await Interview.find({ userId });
 
   return res
-  .status(200)
-  .json(
-    new ApiResponse(
-      200,
-      sessions,
-      "All user sessions fetched successfully!"
-    )
-  )
-})
+    .status(200)
+    .json(
+      new ApiResponse(200, sessions, "All user sessions fetched successfully!")
+    );
+});
 
 const getMonthlySessionDetails = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
@@ -408,23 +399,21 @@ const getMonthlySessionDetails = asyncHandler(async (req, res) => {
   });
 
   // 📊 Domain-wise average
-  const domainAvgScore = Object.entries(domainStats).map(
-    ([domain, stats]) => ({
-      domain,
-      avgScore:
-        stats.totalQuestions > 0
-          ? Number(
-              ((stats.totalScore / (stats.totalQuestions * 10)) * 100)
-            ).toFixed(1)
-          : "0.0",
-    })
-  );
+  const domainAvgScore = Object.entries(domainStats).map(([domain, stats]) => ({
+    domain,
+    avgScore:
+      stats.totalQuestions > 0
+        ? Number(
+            (stats.totalScore / (stats.totalQuestions * 10)) * 100
+          ).toFixed(1)
+        : "0.0",
+  }));
 
   const totalQuestions = uniqueQuestionIds.size;
 
   const avgScore =
     totalQs > 0
-      ? Number(((totalScore / (totalQs * 10)) * 100)).toFixed(1)
+      ? Number((totalScore / (totalQs * 10)) * 100).toFixed(1)
       : "0.0";
 
   return res.status(200).json(
@@ -443,11 +432,126 @@ const getMonthlySessionDetails = asyncHandler(async (req, res) => {
   );
 });
 
+const getMonthlyLeaderboard = asyncHandler(async (req, res) => {
+  let { year, month } = req.query;
+
+  const user = req.user;
+  const now = new Date();
+  year = year ? Number(year) : now.getFullYear();
+  month = month ? Number(month) : now.getMonth() + 1;
+
+  const startDate = new Date(year, month - 1, 1);
+  const endDate = new Date(year, month, 1);
+
+  const leaderboard = await Interview.aggregate([
+    {
+      $match: {
+        isSubmitted: true,
+        startTime: { $gte: startDate, $lt: endDate },
+      },
+    },
+    {
+      $group: {
+        _id: "$userId",
+        totalScore: { $sum: "$score" },
+        totalQuestions: { $sum: { $size: "$questions" } },
+        sessionDates: { $addToSet: { $dateToString: { format: "%Y-%m-%d", date: "$startTime" } } },
+      },
+    },
+    {
+      $addFields: {
+        streak: {
+          $size: "$sessionDates",
+        },
+      },
+    },
+    {
+      $addFields: {
+        percentage: {
+          $cond: [
+            { $gt: ["$totalQuestions", 0] },
+            {
+              $round: [
+                {
+                  $multiply: [
+                    { $divide: ["$totalScore", { $multiply: ["$totalQuestions", 10] }] },
+                    100,
+                  ],
+                },
+                1,
+              ],
+            },
+            0,
+          ],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "_id",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    { $unwind: "$user" },
+    {
+      $sort: {
+        totalScore: -1,
+        streak: -1,
+      },
+    },
+  ]);
+
+  let rank = 1;
+  let prevScore = null;
+  let prevStreak = null;
+
+  const rankedLeaderboard = leaderboard.map((item, index) => {
+    if (
+      prevScore !== null &&
+      (item.totalScore !== prevScore || item.streak !== prevStreak)
+    ) {
+      rank = index + 1;
+    }
+
+    prevScore = item.totalScore;
+    prevStreak = item.streak;
+
+    return {
+      rank,
+      userId: item._id,
+      username: item.user.username,
+      totalScore: item.totalScore,
+      totalQuestions: item.totalQuestions,
+      streak: item.streak,
+      percentage: item.percentage,
+    };
+  });
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        month: {
+          year:`${year}`,
+          month: `${String(month).padStart(2, "0")}`
+        },
+        leaderboard: rankedLeaderboard,
+        user
+      },
+      "Monthly leaderboard fetched successfully"
+    )
+  );
+});
+
+
 export {
   startInterviewSession,
   submitInterviewSession,
   getInterviewSessionById,
   getAllSessionDetails,
   getAllUserSessions,
-  getMonthlySessionDetails
+  getMonthlySessionDetails,
+  getMonthlyLeaderboard
 };

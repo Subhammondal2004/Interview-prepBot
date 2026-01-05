@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext'; 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Home, BookOpen, History, BarChart3, Brain, LogOut } from 'lucide-react';
+import { Home, BookOpen, History, BarChart3, Brain, LogOut, Library } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: Home },
   { path: '/practice', label: 'Practice', icon: BookOpen },
+  { path: '/question-bank', label: 'Questions', icon: Library },
   { path: '/history', label: 'History', icon: History },
   { path: '/analytics', label: 'Analytics', icon: BarChart3 },
 ];

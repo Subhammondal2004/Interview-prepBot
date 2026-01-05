@@ -54,7 +54,109 @@ const getQuestions = asyncHandler(async(req, res)=>{
     )
 })
 
+const createQuestion = asyncHandler(async(req, res)=>{
+    const { domain, difficulty, question, answerKey } = req.body;
+    const user = req.user;
+
+    if([domain, difficulty, question, answerKey].some((field)=> field?.trim() === "")){
+        throw new apiError(400, "All fields are required!")
+    }
+    if(!user){
+        throw new apiError(404, "Unauthorized!")
+    }
+
+    const quesCreated = await Question.create({
+        domain,
+        difficulty,
+        questionText: question,
+        answerKey,
+        userId: user._id
+    })
+
+    return res
+    .status(201)
+    .json(
+        new apiResponse(
+            201,
+            quesCreated,
+            "Question created successfully!"
+        )
+    )
+})
+
+const getQuestionsOfUser = asyncHandler(async(req, res)=>{
+    const userId = req.user._id;
+    const questions = await Question.find({ userId });
+
+    return res
+    .status(200)
+    .json(
+        new apiResponse(
+            200,
+            questions,
+            "Questions fetched successfully!"
+        )
+    )
+})
+
+const deleteQuestion = asyncHandler(async(req, res)=>{
+    const { id } = req.params;
+    if(!id){
+        throw new apiError(400, "ID of Question required!")
+    }
+
+    await Question.findByIdAndDelete(id);
+
+    return res
+    .status(200)
+    .json(
+        new apiResponse(
+            200,
+            [],
+            "Question deleted by ID!"
+        )
+    )
+})
+
+const editQuestion = asyncHandler(async(req, res)=>{
+    const { id } = req.params;
+    const { questionText, answerKey } = req.body;
+    if([questionText, answerKey].some((field)=> field?.trim() === "")){
+        throw new apiError(400, "All fields are required!")
+    }
+    if(!id){
+        throw new apiError(400, "ID required to edit")
+    }
+
+    const editQuestion = await Question.findByIdAndUpdate(
+        {_id: id } ,
+        {
+            $set:{
+                questionText,
+                answerKey
+            }
+        },
+        {
+            new : true
+        }
+    )
+
+    return res
+    .status(200)
+    .json(
+        new apiResponse(
+            200,
+            editQuestion,
+            "Question eddited successfully!"
+        )
+    )
+})
+
 export{
     questionSet,
-    getQuestions
+    getQuestions,
+    createQuestion,
+    getQuestionsOfUser,
+    deleteQuestion,
+    editQuestion
 }

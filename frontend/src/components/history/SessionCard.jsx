@@ -6,9 +6,9 @@ import { Link } from 'react-router-dom';
 
 export function SessionCard({ session }) {
   const category = categories.find(c => c.name === session.domain);
-  const scoreColor = session.averageScore >= 7
+  const scoreColor = session.score >= 7
     ? 'text-success' 
-    : session.averageScore >= 4
+    : session.score >= 4
       ? 'text-warning' 
       : 'text-destructive';
 

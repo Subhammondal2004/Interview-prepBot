@@ -1,3 +1,4 @@
+import { Users, Database, Monitor, Globe, Code2 } from 'lucide-react';
 export const categories = [
   { id: 'Web Development', name: 'Web Development', icon: '💬', color: 'hsl(var(--chart-1))' },
   { id: 'Data Structures', name: 'Data Structures', icon: '💻', color: 'hsl(var(--chart-2))' },
@@ -151,4 +152,14 @@ export const categoryStats = [
   { category: 'Situational', totalQuestions: 12, averageScore: 85, improvement: 15 },
   { category: 'Leadership', totalQuestions: 8, averageScore: 78, improvement: 10 },
   { category: 'Problem Solving', totalQuestions: 10, averageScore: 80, improvement: 5 },
+];
+export const leaderboardData = [
+  { rank: 1, name: 'Alex Johnson', avatar: 'AJ', score: 2450, questionsAnswered: 156, streak: 23 },
+  { rank: 2, name: 'Sarah Chen', avatar: 'SC', score: 2280, questionsAnswered: 142, streak: 18 },
+  { rank: 3, name: 'Mike Wilson', avatar: 'MW', score: 2150, questionsAnswered: 134, streak: 15 },
+  { rank: 4, name: 'Emily Davis', avatar: 'ED', score: 1980, questionsAnswered: 128, streak: 12 },
+  { rank: 5, name: 'You', avatar: 'YO', score: 1850, questionsAnswered: 115, streak: 8, isCurrentUser: true },
+  { rank: 6, name: 'Chris Brown', avatar: 'CB', score: 1720, questionsAnswered: 108, streak: 7 },
+  { rank: 7, name: 'Lisa Wang', avatar: 'LW', score: 1650, questionsAnswered: 102, streak: 5 },
+  { rank: 8, name: 'James Lee', avatar: 'JL', score: 1580, questionsAnswered: 98, streak: 4 },
 ];

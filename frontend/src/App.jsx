@@ -13,6 +13,7 @@ import History from "./pages/History";
 import SessionDetail from "./pages/SessionDetail";
 import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
+import QuestionBank from "./pages/QuestionBank";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ const App = () => (
             <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
             <Route path="/history/:sessionId" element={<ProtectedRoute><SessionDetail /></ProtectedRoute>} />
             <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+            <Route path="/question-bank" element={<ProtectedRoute><QuestionBank /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
