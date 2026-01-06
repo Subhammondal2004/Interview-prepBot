@@ -73,7 +73,7 @@ export default function History() {
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
                 >
-                  <span className="mr-2">{category.icon}</span>
+                  <span className="mr-2">{category?.icon}</span>
                   {category.name}
                 </DropdownMenuItem>
               ))}

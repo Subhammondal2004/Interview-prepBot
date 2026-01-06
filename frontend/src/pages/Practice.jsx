@@ -154,7 +154,7 @@ export default function Practice() {
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={cat.name}>
                         <span className="flex items-center gap-2">
-                          <span>{cat.icon}</span>
+                          <span>{cat?.icon}</span>
                           {cat.name}
                         </span>
                       </SelectItem>

@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext'; 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Home, BookOpen, History, BarChart3, Brain, LogOut, Library } from 'lucide-react';
+import { Home, BookOpen, History, BarChart3, Brain, LogOut, Library, Sun, Moon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast';
+import { useTheme } from '@/components/ThemeProvider';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: Home },
@@ -20,6 +21,7 @@ export function Navbar() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { toast } = useToast();
+  const { theme, toggleTheme } = useTheme();
   const URL = import.meta.env.VITE_SERVER_URL;
 
   const handleLogout = () => {
@@ -81,6 +83,19 @@ export function Navbar() {
                 </Link>
               );
             })}
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="ml-2 transition-all duration-300 hover:rotate-12 active:scale-90"
+            >
+              {theme === 'light' ? (
+                <Moon className="h-5 w-5 text-muted-foreground" />
+              ) : (
+                <Sun className="h-5 w-5 text-muted-foreground" />
+              )}
+            </Button>
             
             <Link 
               to="/profile"
@@ -123,6 +138,13 @@ export function Navbar() {
                 </Link>
               );
             })}
+
+            <button
+              onClick={toggleTheme}
+              className="flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-300 active:scale-90"
+            >
+              {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+            </button>
             
             <Link 
               to="/profile"
