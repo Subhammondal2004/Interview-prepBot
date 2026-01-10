@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Send, Loader2 } from 'lucide-react';
+import { SafeIcon } from '@/components/common/SafeIcon';
 
 export function AnswerInput({ onSubmit, isLoading, disabled }) {
   const [answer, setAnswer] = useState('');
@@ -39,12 +40,12 @@ export function AnswerInput({ onSubmit, isLoading, disabled }) {
           >
             {isLoading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <SafeIcon icon={Loader2} iconClassName="h-4 w-4 animate-spin" />
                 Analyzing
               </>
             ) : (
               <>
-                <Send className="h-4 w-4" />
+                <SafeIcon icon={Send} iconClassName="h-4 w-4" />
                 Submit
               </>
             )}

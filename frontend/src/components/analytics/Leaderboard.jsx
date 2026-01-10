@@ -1,6 +1,7 @@
 import { Trophy, Flame, HelpCircle } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { SafeIcon } from '@/components/common/SafeIcon';
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -19,7 +20,7 @@ const getRankStyle = (rank) => {
 
 const getRankIcon = (rank) => {
   if (rank <= 3) {
-    return <Trophy className="h-4 w-4" />;
+    return <SafeIcon icon={Trophy} iconClassName="h-4 w-4" />;
   }
   return <span className="text-sm font-bold">{rank}</span>;
 };
@@ -110,7 +111,7 @@ export function Leaderboard() {
           </p>
         </div>
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <Flame className="h-4 w-4 text-orange-500" />
+          <SafeIcon icon={Flame} iconClassName="h-4 w-4 text-orange-500" />
           <span>Streak bonus active</span>
         </div>
       </div>
@@ -159,11 +160,11 @@ export function Leaderboard() {
                 </p>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
-                    <HelpCircle className="h-3 w-3" />
+                    <SafeIcon icon={HelpCircle} iconClassName="h-3 w-3" />
                     {user?.totalQuestions}
                   </span>
                   <span className="flex items-center gap-1">
-                    <Flame className="h-3 w-3 text-orange-500" />
+                    <SafeIcon icon={Flame} iconClassName="h-3 w-3 text-orange-500" />
                     {user.streak} days
                   </span>
                 </div>

@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label";
 import { Plus, Trash2, Edit2, Search, Filter } from "lucide-react";
 import { categories } from "@/data/mockData";
 import { useToast } from "@/hooks/use-toast";
+import { SafeIcon } from "@/components/common/SafeIcon";
 import { cn } from "@/lib/utils";
 import axios from "axios";
 
@@ -41,6 +42,7 @@ export default function QuestionBank() {
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [Questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     text: "",
@@ -53,10 +55,12 @@ export default function QuestionBank() {
 
   useEffect(() => {
     async function getQuestion() {
+      setLoading(true);
       await axios
         .get(`${URL}/questions/user-question`, { withCredentials: true })
         .then((res) => {
           setQuestions(res.data.data);
+          setLoading(false);
         });
     }
     getQuestion();
@@ -163,6 +167,16 @@ export default function QuestionBank() {
       filterDifficulty === "all" || q.difficulty === filterDifficulty;
     return matchesSearch && matchesCategory && matchesDifficulty;
   });
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-16 text-center">
+          <p>Loading...</p>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -321,7 +335,15 @@ export default function QuestionBank() {
                 <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat.id} value={cat.name}>
-                    {cat.name}
+                    <span className="flex items-center gap-2">
+                      <span>
+                        <SafeIcon
+                          icon={cat?.icon}
+                          iconClassName="h-4 w-4 text-primary"
+                        />
+                      </span>
+                      {cat.name}
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>

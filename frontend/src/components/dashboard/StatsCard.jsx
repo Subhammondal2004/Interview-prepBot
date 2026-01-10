@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { SafeIcon } from '@/components/common/SafeIcon';
 
 export function StatsCard({ title, value, subtitle, icon, trend, className }) {
   return (
@@ -25,7 +26,7 @@ export function StatsCard({ title, value, subtitle, icon, trend, className }) {
           )}
         </div>
         <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-          {icon}
+          <SafeIcon icon={icon} iconClassName="h-6 w-6" />
         </div>
       </div>
     </div>

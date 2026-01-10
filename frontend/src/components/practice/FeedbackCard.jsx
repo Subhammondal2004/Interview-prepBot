@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
+import { SafeIcon } from '@/components/common/SafeIcon';
 
 export function FeedbackCard({ answer }) {
   const scoreColor =
@@ -38,11 +39,10 @@ export function FeedbackCard({ answer }) {
                   : "bg-destructive/10"
               )}
             >
-              {answer.score >= 7 ? (
-                <CheckCircle2 className="h-6 w-6 text-success" />
-              ) : (
-                <AlertCircle className={cn("h-6 w-6", scoreColor)} />
-              )}
+              <SafeIcon 
+                icon={answer.score >= 7 ? CheckCircle2 : AlertCircle } 
+                iconClassName={cn("h-6 w-6", answer.score >= 7 ? "text-success" : scoreColor)} 
+              />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Your Score</p>
@@ -72,7 +72,7 @@ export function FeedbackCard({ answer }) {
       {/* Feedback Section */}
       <div className="rounded-xl border border-border bg-card p-6 shadow-soft">
         <div className="flex items-center gap-2 mb-4">
-          <Target className="h-5 w-5 text-primary" />
+          <SafeIcon icon={Target} iconClassName="h-5 w-5 text-primary" />
           <h3 className="text-lg font-semibold text-foreground">Feedback</h3>
         </div>
         <p className="text-muted-foreground leading-relaxed">
@@ -82,7 +82,7 @@ export function FeedbackCard({ answer }) {
       {/* Improvements Section */}
       <div className="rounded-xl border border-border bg-card p-6 shadow-soft">
         <div className="flex items-center gap-2 mb-4">
-          <TrendingUp className="h-5 w-5 text-accent" />
+           <SafeIcon icon={TrendingUp} iconClassName="h-5 w-5 text-accent" />
           <h3 className="text-lg font-semibold text-foreground">
             How to Improve
           </h3>

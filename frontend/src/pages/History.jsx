@@ -10,23 +10,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { SafeIcon } from '@/components/common/SafeIcon';
 import axios from "axios";
 import { Link } from "react-router-dom";
 
 export default function History() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sessions, setSessions] = useState([]);
+  const [loading, setLoading ] = useState(false);
 
   const URL = import.meta.env.VITE_SERVER_URL;
 
   useEffect(() => {
     async function fetchSessions() {
+      setLoading(true);
       await axios
         .get(`${URL}/sessions/all-user-sessions`, {
           withCredentials: true,
         })
         .then((res) => {
           setSessions(res.data.data);
+          setLoading(false);
         });
     }
 
@@ -42,6 +46,15 @@ export default function History() {
     (c) => c.id === selectedCategory
   );
 
+  if (loading) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-16 text-center">
+          <p>Loading...</p>
+        </div>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -59,9 +72,9 @@ export default function History() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-2">
-                <Filter className="h-4 w-4" />
+                <SafeIcon icon={Filter} iconClassName="h-4 w-4"/>
                 {selectedCategoryData?.name || "All Categories"}
-                <ChevronDown className="h-4 w-4" />
+                <SafeIcon icon={ChevronDown} iconClassName="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -73,7 +86,7 @@ export default function History() {
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
                 >
-                  <span className="mr-2">{category?.icon}</span>
+                  <span className="mr-2"><SafeIcon icon={category?.icon} iconClassName="h-4 w-4 text-primary"/></span>
                   {category.name}
                 </DropdownMenuItem>
               ))}
@@ -116,7 +129,7 @@ export default function History() {
           <div className="text-center py-16 animate-fade-in">
             <div className="flex justify-center mb-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                <Calendar className="h-8 w-8 text-muted-foreground" />
+                <SafeIcon icon={Calendar} iconClassName="h-8 w-8 text-muted-foreground" />
               </div>
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">

@@ -1,10 +1,10 @@
 import { Users, Database, Monitor, Globe, Code2 } from 'lucide-react';
 export const categories = [
-  { id: 'Web Development', name: 'Web Development', icon: '💬', color: 'hsl(var(--chart-1))' },
-  { id: 'Data Structures', name: 'Data Structures', icon: '💻', color: 'hsl(var(--chart-2))' },
-  { id: 'HR', name: 'HR', icon: '🎯', color: 'hsl(var(--chart-3))' },
-  { id: 'Database', name: 'Database', icon: '👥', color: 'hsl(var(--chart-4))' },
-  { id: 'Operating Systems', name: 'Operating Systems', icon: '🧩', color: 'hsl(var(--chart-5))' },
+  { id: 'Web Development', name: 'Web Development', icon: Globe, color: 'hsl(var(--chart-1))' },
+  { id: 'Data Structures', name: 'Data Structures', icon: Code2, color: 'hsl(var(--chart-2))' },
+  { id: 'HR', name: 'HR', icon: Users, color: 'hsl(var(--chart-3))' },
+  { id: 'Database', name: 'Database', icon: Database, color: 'hsl(var(--chart-4))' },
+  { id: 'Operating Systems', name: 'Operating Systems', icon: Monitor, color: 'hsl(var(--chart-5))' },
 ];
 
 export const questions = [

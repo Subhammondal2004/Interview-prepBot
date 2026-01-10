@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast';
 import { useTheme } from '@/components/ThemeProvider';
+import { SafeIcon } from '@/components/common/SafeIcon';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: Home },
@@ -57,7 +58,7 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-              <Brain className="h-5 w-5 text-primary-foreground" />
+              <SafeIcon icon={Brain} iconClassName="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="text-lg font-semibold text-foreground">InterviewAI</span>
           </Link>
@@ -68,18 +69,27 @@ export function Navbar() {
               const Icon = item.icon;
               
               return (
-                <Link
+                 <Link
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                    "relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 active:scale-95",
                     isActive
                       ? "bg-primary/10 text-primary"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   )}
                 >
-                  <Icon className="h-4 w-4" />
+                  <SafeIcon 
+                    icon={item.icon} 
+                    iconClassName={cn(
+                      "h-4 w-4 transition-transform duration-300",
+                      isActive && "scale-110"
+                    )} 
+                  />
                   {item.label}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-0.5 bg-primary rounded-full" />
+                  )}
                 </Link>
               );
             })}
@@ -90,11 +100,10 @@ export function Navbar() {
               onClick={toggleTheme}
               className="ml-2 transition-all duration-300 hover:rotate-12 active:scale-90"
             >
-              {theme === 'light' ? (
-                <Moon className="h-5 w-5 text-muted-foreground" />
-              ) : (
-                <Sun className="h-5 w-5 text-muted-foreground" />
-              )}
+               <SafeIcon 
+                icon={theme === 'light' ? Moon : Sun} 
+                iconClassName="h-5 w-5 text-muted-foreground" 
+              />
             </Button>
             
             <Link 
@@ -114,7 +123,7 @@ export function Navbar() {
               onClick={handleLogout}
               className="text-muted-foreground hover:text-foreground"
             >
-              <LogOut className="h-4 w-4" />
+              <SafeIcon icon={LogOut} iconClassName="h-4 w-4" />
             </Button>
           </div>
 
@@ -124,17 +133,17 @@ export function Navbar() {
               const Icon = item.icon;
               
               return (
-                <Link
+                 <Link
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    "flex items-center justify-center p-2 rounded-lg transition-all duration-200",
+                    "flex items-center justify-center p-2 rounded-lg transition-all duration-300 active:scale-90",
                     isActive
                       ? "bg-primary/10 text-primary"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   )}
                 >
-                  <Icon className="h-5 w-5" />
+                  <SafeIcon icon={item.icon} iconClassName="h-5 w-5" />
                 </Link>
               );
             })}
@@ -143,7 +152,7 @@ export function Navbar() {
               onClick={toggleTheme}
               className="flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-300 active:scale-90"
             >
-              {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+              <SafeIcon icon={theme === 'light' ? Moon : Sun} iconClassName="h-5 w-5" />
             </button>
             
             <Link 
@@ -161,7 +170,7 @@ export function Navbar() {
               onClick={handleLogout}
               className="flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200"
             >
-              <LogOut className="h-5 w-5" />
+              <SafeIcon icon={LogOut} iconClassName="h-5 w-5" />
             </button>
           </div>
         </div>

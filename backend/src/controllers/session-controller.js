@@ -336,7 +336,7 @@ const getAllUserSessions = asyncHandler(async (req, res) => {
     throw new apiError(400, "User need to Login or require vaild ID!");
   }
 
-  const sessions = await Interview.find({ userId });
+  const sessions = await Interview.find({ userId }).sort({ startTime: -1 });
 
   return res
     .status(200)

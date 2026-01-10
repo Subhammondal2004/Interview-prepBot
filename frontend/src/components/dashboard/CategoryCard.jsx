@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SafeIcon } from '@/components/common/SafeIcon';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -26,7 +27,12 @@ export function CategoryCard({ id, name, icon, averageScore, className }) {
     >
       <div className="flex items-start justify-between">
         <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-2xl">
-          {icon}
+          <SafeIcon
+            icon={icon}
+            iconClassName="h-6 w-6 text-primary"
+            emojiClassName="text-2xl"
+            fallback="📚"
+          />
         </div>
         <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary" />
       </div>

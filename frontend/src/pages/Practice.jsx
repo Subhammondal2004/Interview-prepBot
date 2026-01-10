@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { categories } from "@/data/mockData";
-import { Play, Send, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Send, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { FeedbackCard } from "@/components/practice/FeedbackCard";
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SafeIcon } from '@/components/common/SafeIcon';
 import axios from "axios";
 
 const difficulties = ["Easy", "Medium", "Hard"];
@@ -37,7 +38,7 @@ export default function Practice() {
 
   const currentQuestion = questions[currentQuestionIndex];
   const currentAnswer =
-    answers.find((a) => a.questionId === currentQuestion._id)?.answer || "";
+    answers.find((a) => a?.questionId === currentQuestion?._id)?.answer || "";
 
   const handleStartSession = async () => {
     if (!domain || !difficulty) return;
@@ -154,7 +155,7 @@ export default function Practice() {
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={cat.name}>
                         <span className="flex items-center gap-2">
-                          <span>{cat?.icon}</span>
+                          <span><SafeIcon icon={cat?.icon} iconClassName="h-5 w-5 text-primary"/></span>
                           {cat.name}
                         </span>
                       </SelectItem>
@@ -188,17 +189,17 @@ export default function Practice() {
                 size="lg"
                 className="w-full mt-4 gap-2"
               >
-                { isStarting ? (
-                  <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Starting Session...
-                </>
-                ):(
-                  <>
-                  <Play className="h-4 w-4" />
-                  Start Session
-                </>
-                )}
+                {isStarting ? (
+              <>
+                <SafeIcon icon={Loader2} iconClassName="h-4 w-4 animate-spin" />
+                Starting session...
+              </>
+            ) : (
+              <>
+                <SafeIcon icon={Send} iconClassName="h-4 w-4" />
+                Start Session
+              </>
+            )}
               </Button>
             </div>
           </div>
@@ -297,12 +298,12 @@ export default function Practice() {
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <SafeIcon icon={Loader2} iconClassName="h-4 w-4 animate-spin"/>
                 Submitting...
               </>
             ) : (
               <>
-                <Send className="h-4 w-4" />
+                <SafeIcon icon={Send} iconClassName="h-4 w-4" />
                 Submit All
               </>
             )}
@@ -356,7 +357,7 @@ export default function Practice() {
                 variant="outline"
                 className="gap-2"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <SafeIcon icon={ChevronLeft} iconClassName="h-4 w-4"/>
                 Previous
               </Button>
 
@@ -384,7 +385,7 @@ export default function Practice() {
                 className="gap-2"
               >
                 Next
-                <ChevronRight className="h-4 w-4" />
+                <SafeIcon icon={ChevronRight} iconClassName="h-4 w-4"/>
               </Button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Lightbulb } from 'lucide-react';
+import { SafeIcon } from '@/components/common/SafeIcon';
 
 const difficultyColors = {
   easy: 'bg-success/10 text-success border-success/20',
@@ -31,7 +32,7 @@ export function QuestionCard({ question, showAnswerType = true }) {
         <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/10">
           <div className="flex items-start gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
-              <Lightbulb className="h-4 w-4" />
+             <SafeIcon icon={Lightbulb} iconClassName="h-4 w-4" />
             </div>
             <div>
               <p className="text-sm font-medium text-foreground">Expected Answer Type</p>
