@@ -1,16 +1,28 @@
 import { cn } from '@/lib/utils';
 import { SafeIcon } from '@/components/common/SafeIcon';
+import { motion } from 'framer-motion';
 
 export function StatsCard({ title, value, subtitle, icon, trend, className }) {
   return (
-    <div className={cn(
-      "relative overflow-hidden rounded-xl border border-border bg-card p-6 shadow-soft transition-all duration-300 hover:shadow-soft-lg animate-fade-in",
-      className
-    )}>
+    <motion.div 
+      className={cn(
+        "relative overflow-hidden rounded-xl border border-border bg-card p-6 shadow-soft transition-shadow duration-300 hover:shadow-soft-lg",
+        className
+      )}
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
       <div className="flex items-start justify-between">
         <div className="space-y-2">
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="text-3xl font-bold text-foreground">{value}</p>
+          <motion.p 
+            className="text-3xl font-bold text-foreground"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+          >
+            {value}
+          </motion.p>
           {subtitle && (
             <p className="text-sm text-muted-foreground">{subtitle}</p>
           )}
@@ -25,10 +37,14 @@ export function StatsCard({ title, value, subtitle, icon, trend, className }) {
             </div>
           )}
         </div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <motion.div 
+          className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary"
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
           <SafeIcon icon={icon} iconClassName="h-6 w-6" />
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
