@@ -17,7 +17,8 @@ export function RecentActivity() {
       })
     }
     fetchSessions();
-  },[])
+  },[URL])
+  
   return (
     <div className="rounded-xl border border-border bg-card p-6 shadow-soft animate-slide-up">
       <h3 className="text-lg font-semibold text-foreground mb-4">Recent Sessions</h3>

@@ -7,6 +7,11 @@ import { format } from "date-fns";
 import { categories } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 import { SafeIcon } from "@/components/common/SafeIcon";
+import {
+  SessionCardSkeleton,
+  LoadingSkeleton,
+} from "@/components/ui/loading-skeleton";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -32,32 +37,58 @@ export default function SessionDetail() {
         setLoading(false);
       }
     }
-
     fetchSessionByID();
   }, [sessionId]);
-  console.log(session);
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="container mx-auto px-4 py-16 text-center">
-          <p>Loading session...</p>
-        </div>
-      </Layout>
-    );
-  }
 
   if (!session) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">
-            Session not found
-          </h1>
-          <Link to="/history">
-            <Button variant="outline">Back to History</Button>
-          </Link>
-        </div>
+        {/* Loading State with Animated Skeletons */}
+        <AnimatePresence mode="wait">
+          {loading ? (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-4"
+            >
+              {/* Header skeleton */}
+              <div className="flex items-center justify-between mb-6">
+                <LoadingSkeleton className="h-6 w-32" />
+                <LoadingSkeleton className="h-4 w-24" />
+              </div>
+              {/* Session card skeletons with stagger */}
+              {[1, 2, 3, 4].map((i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: i * 0.1 }}
+                >
+                  <SessionCardSkeleton />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="content"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className="container mx-auto px-4 py-16 text-center">
+                <h1 className="text-2xl font-bold text-foreground mb-4">
+                  Session not found
+                </h1>
+                <Link to="/history">
+                  <Button variant="outline">Back to History</Button>
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Layout>
     );
   }
@@ -80,7 +111,6 @@ export default function SessionDetail() {
           <ArrowLeft className="h-4 w-4" />
           Back to History
         </Link>
-
         {/* Session Header */}
         <div className="rounded-xl border border-border bg-card p-6 shadow-soft mb-8 animate-fade-in">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

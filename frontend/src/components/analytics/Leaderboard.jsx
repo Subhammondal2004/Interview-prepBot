@@ -1,7 +1,12 @@
 import { Trophy, Flame, HelpCircle } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { SafeIcon } from '@/components/common/SafeIcon';
+import { SafeIcon } from "@/components/common/SafeIcon";
+import {
+  SessionCardSkeleton,
+  LoadingSkeleton,
+} from "@/components/ui/loading-skeleton";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -29,27 +34,36 @@ export function Leaderboard() {
   const [leaderboard, setLeaderBoard] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [month, setMonth] = useState("");
+  const [loading, setLoading] = useState(false);
   const now = new Date();
   const URL = import.meta.env.VITE_SERVER_URL;
 
   useEffect(() => {
     async function fetch() {
-      await axios
-        .get(`${URL}/sessions/monthly-leaderboard`, {
-          params: {
-            year: now.getFullYear(),
-            month: now.getMonth() + 1,
-          },
-          withCredentials: true,
-        })
-        .then((res) => {
-          setLeaderBoard(res.data.data.leaderboard);
-          setCurrentUser(res.data.data.user);
-          setMonth(res.data.data.month);
-        });
+      setLoading(true);
+      try {
+        await axios
+          .get(`${URL}/sessions/monthly-leaderboard`, {
+            params: {
+              year: now.getFullYear(),
+              month: now.getMonth() + 1,
+            },
+            withCredentials: true,
+          })
+          .then((res) => {
+            setLeaderBoard(res.data.data.leaderboard);
+            setCurrentUser(res.data.data.user);
+            setMonth(res.data.data.month);
+          });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     }
     fetch();
-  }, []);
+  }, [URL]);
+
   const getInitials = (name) => {
     if (!name) return "U";
     return name
@@ -101,6 +115,7 @@ export function Leaderboard() {
     }
   };
   getMonth();
+
   return (
     <div className="rounded-xl border border-border bg-card p-6 shadow-soft animate-fade-in">
       <div className="flex items-center justify-between mb-6">
@@ -116,71 +131,112 @@ export function Leaderboard() {
         </div>
       </div>
 
-      <div className="space-y-3">
-        {leaderboard.map((user) => (
-          <div
-            key={user?.rank}
-            className={cn(
-              "flex items-center gap-4 p-3 rounded-lg transition-all",
-              user?.userId === currentUser._id
-                ? "bg-primary/10 border border-primary/20"
-                : "hover:bg-muted/50"
-            )}
+      {/* Loading State with Animated Skeletons */}
+      <AnimatePresence mode="wait">
+        {loading ? (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-4"
           >
-            {/* Rank */}
-            <div
-              className={cn(
-                "flex items-center justify-center w-8 h-8 rounded-full border",
-                getRankStyle(user?.rank)
-              )}
-            >
-              {getRankIcon(user?.rank)}
+            {/* Header skeleton */}
+            <div className="flex items-center justify-between mb-6">
+              <LoadingSkeleton className="h-6 w-32" />
+              <LoadingSkeleton className="h-4 w-24" />
             </div>
-
-            {/* Avatar & Name */}
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              <Avatar className="h-9 w-9">
-                <AvatarFallback className="bg-primary/10 text-primary">
-                  {getInitials(user.username)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="min-w-0">
-                <p
+            {/* Session card skeletons with stagger */}
+            {[1, 2, 3, 4].map((i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+              >
+                <SessionCardSkeleton />
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className="space-y-3">
+              {leaderboard.map((user) => (
+                <div
+                  key={user?.rank}
                   className={cn(
-                    "font-medium text-sm truncate",
+                    "flex items-center gap-4 p-3 rounded-lg transition-all",
                     user?.userId === currentUser._id
-                      ? "text-primary"
-                      : "text-foreground"
+                      ? "bg-primary/10 border border-primary/20"
+                      : "hover:bg-muted/50"
                   )}
                 >
-                  {user?.username}
-                  {user?.userId === currentUser._id && (
-                    <span className="text-xs ml-1">(You)</span>
-                  )}
-                </p>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <SafeIcon icon={HelpCircle} iconClassName="h-3 w-3" />
-                    {user?.totalQuestions}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <SafeIcon icon={Flame} iconClassName="h-3 w-3 text-orange-500" />
-                    {user.streak} days
-                  </span>
-                </div>
-              </div>
-            </div>
+                  {/* Rank */}
+                  <div
+                    className={cn(
+                      "flex items-center justify-center w-8 h-8 rounded-full border",
+                      getRankStyle(user?.rank)
+                    )}
+                  >
+                    {getRankIcon(user?.rank)}
+                  </div>
 
-            {/* Score */}
-            <div className="text-right">
-              <p className="font-bold text-foreground">
-                {user?.totalScore.toLocaleString()}
-              </p>
-              <p className="text-xs text-muted-foreground">points</p>
+                  {/* Avatar & Name */}
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <Avatar className="h-9 w-9">
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {getInitials(user.username)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                      <p
+                        className={cn(
+                          "font-medium text-sm truncate",
+                          user?.userId === currentUser._id
+                            ? "text-primary"
+                            : "text-foreground"
+                        )}
+                      >
+                        {user?.username}
+                        {user?.userId === currentUser._id && (
+                          <span className="text-xs ml-1">(You)</span>
+                        )}
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <SafeIcon icon={HelpCircle} iconClassName="h-3 w-3" />
+                          {user?.totalQuestions}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <SafeIcon
+                            icon={Flame}
+                            iconClassName="h-3 w-3 text-orange-500"
+                          />
+                          {user.streak} days
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Score */}
+                  <div className="text-right">
+                    <p className="font-bold text-foreground">
+                      {user?.totalScore.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-muted-foreground">points</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-        ))}
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./components/ThemeProvider";
+import { GlobalLoadingProvider } from "./components/common/GlobalLoadingProvider";
+import { LoadingSpinner } from "./components/ui/loading-skeleton";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
@@ -13,8 +15,8 @@ import Practice from "./pages/Practice";
 import History from "./pages/History";
 import SessionDetail from "./pages/SessionDetail";
 import Analytics from "./pages/Analytics";
-import NotFound from "./pages/NotFound";
 import QuestionBank from "./pages/QuestionBank";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +24,12 @@ function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuth();
   
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background text-foreground">
+        <LoadingSpinner size="lg" />
+        <p className="text-sm text-muted-foreground animate-pulse">Loading...</p>
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
@@ -36,9 +43,13 @@ function PublicRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuth();
   
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background text-foreground">
+        <LoadingSpinner size="lg" />
+        <p className="text-sm text-muted-foreground animate-pulse">Loading...</p>
+      </div>
+    );
   }
-  
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -69,9 +80,11 @@ const App = () => (
       <TooltipProvider>
         <BrowserRouter>
           <AuthProvider>
-            <Toaster />
-            <Sonner />
-            <AppRoutes />
+            <GlobalLoadingProvider>
+              <Toaster />
+              <Sonner />
+              <AppRoutes />
+            </GlobalLoadingProvider>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>

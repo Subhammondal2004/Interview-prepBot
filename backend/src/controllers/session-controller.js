@@ -273,11 +273,13 @@ const getAllSessionDetails = asyncHandler(async (req, res) => {
       domainStats[domain] = {
         totalScore: 0,
         totalQuestions: 0,
+        duration: 0
       };
     }
 
     domainStats[domain].totalScore += session.score;
     domainStats[domain].totalQuestions += questionCount;
+    domainStats[domain].duration += session.duration;
   });
 
   let bestDomain = null;
@@ -301,6 +303,7 @@ const getAllSessionDetails = asyncHandler(async (req, res) => {
       domain,
       score: percentage,
       totalQuestions: stats.totalQuestions,
+      duration: stats.duration
     };
   });
 

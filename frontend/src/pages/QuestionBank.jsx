@@ -25,6 +25,15 @@ import { categories } from "@/data/mockData";
 import { useToast } from "@/hooks/use-toast";
 import { SafeIcon } from "@/components/common/SafeIcon";
 import { cn } from "@/lib/utils";
+import {
+  AnimatedContainer,
+  AnimatedCard,
+} from "@/components/common/AnimatedCard";
+import {
+  SessionCardSkeleton,
+  LoadingSkeleton,
+} from "@/components/ui/loading-skeleton";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
 const difficultyColors = {
@@ -56,15 +65,21 @@ export default function QuestionBank() {
   useEffect(() => {
     async function getQuestion() {
       setLoading(true);
-      await axios
-        .get(`${URL}/questions/user-question`, { withCredentials: true })
-        .then((res) => {
-          setQuestions(res.data.data);
-          setLoading(false);
-        });
+      try {
+        await axios
+          .get(`${URL}/questions/user-question`, { withCredentials: true })
+          .then((res) => {
+            setQuestions(res.data.data);
+            setLoading(false);
+          });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     }
     getQuestion();
-  }, []);
+  }, [URL]);
 
   const resetForm = () => {
     setFormData({
@@ -168,21 +183,16 @@ export default function QuestionBank() {
     return matchesSearch && matchesCategory && matchesDifficulty;
   });
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="container mx-auto px-4 py-16 text-center">
-          <p>Loading...</p>
-        </div>
-      </Layout>
-    );
-  }
-
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 animate-fade-in">
+        <motion.div
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+        >
           <div>
             <h1 className="text-2xl font-bold text-foreground">
               Question Bank
@@ -312,10 +322,15 @@ export default function QuestionBank() {
               </form>
             </DialogContent>
           </Dialog>
-        </div>
+        </motion.div>
 
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6 animate-slide-up">
+        <motion.div
+          className="flex flex-col sm:flex-row gap-4 mb-6"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -363,121 +378,187 @@ export default function QuestionBank() {
               </SelectContent>
             </Select>
           </div>
-        </div>
+        </motion.div>
 
         {/* Questions List */}
-        {filteredQuestions.length === 0 ? (
-          <Card className="animate-fade-in">
-            <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                <Plus className="h-8 w-8 text-muted-foreground" />
+        <AnimatePresence mode="wait">
+          {loading ? (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-4"
+            >
+              {/* Header skeleton */}
+              <div className="flex items-center justify-between mb-6">
+                <LoadingSkeleton className="h-6 w-32" />
+                <LoadingSkeleton className="h-4 w-24" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                {Questions.length === 0
-                  ? "No custom questions yet"
-                  : "No matching questions"}
-              </h3>
-              <p className="text-muted-foreground mb-4">
-                {Questions.length === 0
-                  ? "Start building your personal question bank by adding your first question."
-                  : "Try adjusting your search or filters."}
-              </p>
-              {Questions.length === 0 && (
-                <Button onClick={() => setIsDialogOpen(true)} className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  Add Your First Question
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-4">
-            {filteredQuestions?.map((question, index) => (
-              <Card
-                key={question.id}
-                className="animate-fade-in hover:shadow-md transition-shadow"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-foreground font-medium mb-3">
-                        {question.questionText}
+              {/* Session card skeletons with stagger */}
+              {[1, 2, 3, 4].map((i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: i * 0.1 }}
+                >
+                  <SessionCardSkeleton />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="content"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              {filteredQuestions.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <Card className="animate-fade-in">
+                    <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                      <motion.div
+                        className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 300,
+                          damping: 20,
+                          delay: 0.3,
+                        }}
+                      >
+                        <Plus className="h-8 w-8 text-muted-foreground" />
+                      </motion.div>
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
+                        {Questions.length === 0
+                          ? "No custom questions yet"
+                          : "No matching questions"}
+                      </h3>
+                      <p className="text-muted-foreground mb-4">
+                        {Questions.length === 0
+                          ? "Start building your personal question bank by adding your first question."
+                          : "Try adjusting your search or filters."}
                       </p>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="outline" className="text-xs">
-                          {question.domain}
-                        </Badge>
-                        <Badge
-                          className={cn(
-                            "text-xs border",
-                            difficultyColors[question.difficulty]
-                          )}
+                      {Questions.length === 0 && (
+                        <Button
+                          onClick={() => setIsDialogOpen(true)}
+                          className="gap-2"
                         >
-                          {question.difficulty}
-                        </Badge>
-                        {question.answerKey && (
-                          <span className="text-xs text-muted-foreground">
-                            • {question.answerKey}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => startEdit(question)}
-                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                          <Plus className="h-4 w-4" />
+                          Add Your First Question
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ) : (
+                <AnimatedContainer className="grid gap-4" staggerDelay={0.06}>
+                  {filteredQuestions?.map((question, index) => (
+                    <AnimatedCard key={question.id} index={index}>
+                      <Card
+                        className="animate-fade-in hover:shadow-md transition-shadow"
+                        style={{ animationDelay: `${index * 50}ms` }}
                       >
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(question._id)}
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-foreground font-medium mb-3">
+                                {question.questionText}
+                              </p>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Badge variant="outline" className="text-xs">
+                                  {question.domain}
+                                </Badge>
+                                <Badge
+                                  className={cn(
+                                    "text-xs border",
+                                    difficultyColors[question.difficulty]
+                                  )}
+                                >
+                                  {question.difficulty}
+                                </Badge>
+                                {question.answerKey && (
+                                  <span className="text-xs text-muted-foreground">
+                                    • {question.answerKey}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex gap-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => startEdit(question)}
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                              >
+                                <Edit2 className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDelete(question._id)}
+                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </AnimatedCard>
+                  ))}
+                </AnimatedContainer>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Stats */}
         {Questions.length > 0 && (
-          <div className="mt-8 p-4 rounded-lg bg-muted/50 animate-fade-in">
-            <div className="flex flex-wrap gap-6 text-sm">
-              <div>
-                <span className="text-muted-foreground">Total Questions:</span>
-                <span className="ml-2 font-semibold text-foreground">
-                  {Questions.length}
-                </span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Easy:</span>
-                <span className="ml-2 font-semibold text-success">
-                  {Questions.filter((q) => q.difficulty === "Easy").length}
-                </span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Medium:</span>
-                <span className="ml-2 font-semibold text-warning">
-                  {Questions.filter((q) => q.difficulty === "Medium").length}
-                </span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Hard:</span>
-                <span className="ml-2 font-semibold text-destructive">
-                  {Questions.filter((q) => q.difficulty === "Hard").length}
-                </span>
+          <motion.div
+            className="mt-8 p-4 rounded-lg bg-muted/50"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <div className="mt-8 p-4 rounded-lg bg-muted/50 animate-fade-in">
+              <div className="flex flex-wrap gap-6 text-sm">
+                <div>
+                  <span className="text-muted-foreground">
+                    Total Questions:
+                  </span>
+                  <span className="ml-2 font-semibold text-foreground">
+                    {Questions.length}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Easy:</span>
+                  <span className="ml-2 font-semibold text-success">
+                    {Questions.filter((q) => q.difficulty === "Easy").length}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Medium:</span>
+                  <span className="ml-2 font-semibold text-warning">
+                    {Questions.filter((q) => q.difficulty === "Medium").length}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Hard:</span>
+                  <span className="ml-2 font-semibold text-destructive">
+                    {Questions.filter((q) => q.difficulty === "Hard").length}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
     </Layout>
